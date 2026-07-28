@@ -201,7 +201,7 @@
     <div class="breakdown"><div class="breakdown-label">By essay skill</div><div id="r-breakdown"></div></div>
     <div class="card">
       <div class="stage-tag">What you have</div>
-      <p>You have a full answer to a real NSC essay question, built one decision at a time, with every body point mapped to something the official marking guidelines reward.</p><p>Two things left to do before the examination. Write it out by hand, in your own words, in three pages and about forty minutes, because knowing the shape and being able to produce it under time are different skills. Then run the two quizzes for this topic: the knowledge test to lock the facts, and the source examination to build the skill on top of them.</p><p class="pull">In the examination nobody will offer you three options. The reason this works is that you now know what the wrong two look like.</p>
+      <p>You have a full answer to a real NSC essay question, built one decision at a time, with every body point mapped to something the official marking guidelines reward.</p><p>Two things left to do before the examination. Write it out by hand, in your own words, in three pages and about forty minutes, because knowing the shape and being able to produce it under time are different skills. Then sit Knowledge Check 2, the second set of questions on the facts, to see what has stuck across the five lessons.</p><p class="pull">In the examination nobody will offer you three options. The reason this works is that you now know what the wrong two look like.</p>
     </div>
     <div class="nav" style="justify-content: center;"><button class="btn-primary" id="redo-btn">&#8635; Restart lesson</button></div>
     <div class="footer">That is the Black Power series. Next in Topic 3: the United States Civil Rights Movement, which is examined as a source-based question rather than an essay.</div>
@@ -259,7 +259,7 @@ const FLOW = [
       "A balanced description of both sides, with the marker left to draw the conclusion."
     ],
     "correct": 0,
-    "explanation": "'Critically discuss' asks for two things: you must take the other side seriously, and you must still decide. The second option confuses critical with detailed, and a longer answer that never judges stays in the middle. The third is the most common misreading, since critical means evaluative and not hostile. The fourth stops one step short, and an essay that lays out both sides and declines to decide cannot reach the top bands."
+    "explanation": "'Critically discuss' asks for two things: you must take the other side seriously, and you must still decide. Option {opt1} confuses critical with detailed, and a longer answer that never judges stays in the middle. Option {opt2} is the most common misreading, since critical means evaluative and not hostile. Option {opt3} stops one step short, and an essay that lays out both sides and declines to decide cannot reach the top bands."
   },
   {
     "type": "narrative",
@@ -279,7 +279,7 @@ const FLOW = [
       "The statement is wrong, because the Black Power Movement was a peaceful cultural movement that has been misrepresented by all of its critics."
     ],
     "correct": 0,
-    "explanation": "The first option takes a stance and tells the marker what the essay will prove, which is what the guidelines mean by an independent line of argument. The second is the introduction most people write: true, safe, and containing no argument at all, so the presentation level is capped from the first line. The third takes a stance you cannot defend, because you are about to concede that the Panthers armed patrols and that nine police officers were killed. An unsustainable stance is worse than a cautious one."
+    "explanation": "Option {opt0} takes a stance and tells the marker what the essay will prove, which is what the guidelines mean by an independent line of argument. Option {opt1} is the introduction most people write: true, safe, and containing no argument at all, so the presentation level is capped from the first line. Option {opt2} takes a stance you cannot defend, because you are about to concede that the Panthers armed patrols and that nine police officers were killed. An unsustainable stance is worse than a cautious one."
   },
   {
     "type": "question",
@@ -294,7 +294,7 @@ const FLOW = [
       "The Civil Rights Act of 1964 ended discrimination in the United States, so the Black Power Movement no longer had any real grievance to raise."
     ],
     "correct": 0,
-    "explanation": "Background is where most essays go slack, because people narrate the situation and forget to claim anything about it. The first option makes the conditions into a cause and pre-empts the argument that the militancy was gratuitous. The second is accurate and would earn content credit, but it argues nothing, and a paragraph of sentences like it is exactly what the guidelines call regurgitation. The third is factually wrong: the Act ended legal segregation, not discrimination, and the whole topic exists because of the difference."
+    "explanation": "Background is where most essays go slack, because people narrate the situation and forget to claim anything about it. Option {opt0} makes the conditions into a cause. It lets you pre-empt the argument that the militancy was gratuitous. Option {opt1} is accurate and earns content credit, but it argues nothing. A paragraph of sentences like it is what the guidelines call regurgitation. Option {opt2} is factually wrong: the Act ended legal segregation, not discrimination, and the whole topic exists because of that difference."
   },
   {
     "type": "question",
@@ -309,7 +309,7 @@ const FLOW = [
       "The Black Power philosophy was essentially a strategy of armed struggle against white authority in the United States during the 1960s."
     ],
     "correct": 0,
-    "explanation": "The first option sets up a measuring device the rest of the essay uses, which is precisely what the phrase 'in the context of the Black Power philosophy' is asking for. The second is a good list and it belongs in the paragraph, but a list is not a claim and it leaves the marker to do your work. The third quietly makes the tactics into the philosophy, and once you have written it you have nothing left to weigh the militancy against, so the question becomes unanswerable."
+    "explanation": "Option {opt0} sets up a measuring device the rest of the essay uses, which is what 'in the context of the Black Power philosophy' asks for. Option {opt1} is a good list and belongs in the paragraph, but a list is not a claim, and it leaves the marker to do your work. Option {opt2} quietly makes the tactics into the philosophy. Once you have written it, you have nothing left to weigh the militancy against, and the question becomes unanswerable."
   },
   {
     "type": "question",
@@ -324,7 +324,7 @@ const FLOW = [
       "Malcolm X proves that the movement was violent, since he rejected non-violence and told African Americans to seize freedom by any means possible."
     ],
     "correct": 0,
-    "explanation": "The first option makes a claim the paragraph then proves from his own words, and it holds together the two things the marking guidelines list side by side, since the guidelines tag his call to stand up by whatever means possible as militant and self-empowerment at the same time. The second is biography, and biography is the single most common way people fill a page on this topic without arguing. The third overstates the evidence into 'violent', which you cannot sustain against a source in which his position is explicitly conditional."
+    "explanation": "Option {opt0} makes a claim the paragraph then proves from his own words. It holds together the two things the marking guidelines list side by side. The guidelines tag his call to stand up by whatever means possible as militant and self-empowerment at once, so a marker rewards an answer that carries both. Option {opt1} is biography, and biography is the single most common way people fill a page on this topic without arguing. Option {opt2} overstates the evidence into 'violent'. You cannot sustain that against a source where his position is explicitly conditional."
   },
   {
     "type": "question",
@@ -339,7 +339,7 @@ const FLOW = [
       "Carmichael abandoned non-violence because he had grown impatient and wanted a more exciting form of protest than marching."
     ],
     "correct": 0,
-    "explanation": "The first option gives the break a reason grounded in evidence, which is what turns a change of tactics into an argument the marker can credit as interpretation. The second is the fact and it belongs in the paragraph, but on its own it is narration. The third is the version that sounds sympathetic and quietly destroys your case, because it makes a reasoned political decision sound like restlessness, and it hands the statement in the question everything it wants."
+    "explanation": "Option {opt0} gives the break a reason grounded in evidence, which turns a change of tactics into an argument a marker can credit as interpretation. Option {opt1} is the fact and it belongs in the paragraph, but on its own it is narration. Option {opt2} sounds sympathetic and quietly destroys your case. It makes a reasoned political decision sound like restlessness. It hands the statement in the question everything it wants."
   },
   {
     "type": "question",
@@ -354,7 +354,7 @@ const FLOW = [
       "The Panthers were not really militant, since the guns were carried mainly for display and were rarely used against anybody at all."
     ],
     "correct": 0,
-    "explanation": "Conceding the strongest point against you is not a weakness in a critically discuss essay, it is the thing that makes your qualification credible in the next paragraph. The first option concedes and stays in control by naming the concession as evidence. The second is a founding date with no claim on it. The third is the trap that ruins otherwise strong answers: it denies evidence the marker knows exists, and after that sentence nothing else in your essay carries weight."
+    "explanation": "Conceding the strongest point against you is not a weakness in a critically discuss essay, it is the thing that makes your qualification credible in the next paragraph. Option {opt0} concedes and stays in control by naming the concession as evidence. Option {opt1} is a founding date with no claim on it. Option {opt2} is the trap that ruins otherwise strong answers: it denies evidence the marker knows exists, and after that sentence nothing else in your essay carries weight."
   },
   {
     "type": "question",
@@ -369,7 +369,7 @@ const FLOW = [
       "The self-empowerment programmes show the Black Panther Party was not a militant organisation, so the statement in the question is false."
     ],
     "correct": 0,
-    "explanation": "A counter-argument keeps what you have conceded and adds what the concession leaves out, which is what 'accurate but incomplete' does in three words. The second option contains the same evidence but presents it as an additional fact rather than as a qualification, so the marker sees content without argument. The third throws away the concession you made in the previous paragraph, and an essay that contradicts itself between two paragraphs loses more than it gains."
+    "explanation": "A counter-argument keeps what you have conceded and adds what the concession leaves out, which is what 'accurate but incomplete' does in three words. Option {opt1} contains the same evidence but presents it as an additional fact rather than as a qualification, so the marker sees content without argument. Option {opt2} throws away the concession you made in the previous paragraph, and an essay that contradicts itself between two paragraphs loses more than it gains."
   },
   {
     "type": "question",
@@ -384,7 +384,7 @@ const FLOW = [
       "In conclusion the militant approach was a mistake that destroyed the movement and undid the gains of the Civil Rights Movement."
     ],
     "correct": 0,
-    "explanation": "A conclusion has to decide, and it has to decide the thing the introduction promised. The first option does both, and it draws the judgement from evidence rather than announcing it. The second summarises without concluding, which is where a great many otherwise good essays lose the top band. The third introduces a new and much larger claim in the last sentence, one the essay has produced no evidence for, and a marker will read it as an argument that has lost its footing at the very end."
+    "explanation": "A conclusion has to decide, and it has to decide the thing the introduction promised. Option {opt0} does both, and it draws the judgement from evidence rather than announcing it. Option {opt1} summarises without concluding, which is where many otherwise good essays lose the top band. Option {opt2} introduces a new and much larger claim in the last sentence, one you have produced no evidence for. A marker reads it as an argument that has lost its footing at the very end."
   },
   {
     "type": "essay",
@@ -506,6 +506,9 @@ function renderQuestion(item){
       <span class="opt-letter">${String.fromCharCode(65+pos)}</span>
       <span class="opt-text">${item.options[orig]}</span>${mark}</button>`;
   });
+  const letterFor={};
+  order.forEach((orig,pos)=>{ letterFor[orig]=String.fromCharCode(65+pos); });
+  const explResolved=(item.explanation||"").replace(/\{opt(\d)\}/g,(m,d)=>letterFor[+d]||m);
   const explLabel = item.level ? "Why" : "What that shows";
   let panel="";
   if(revealed && item.build){
@@ -514,7 +517,7 @@ function renderQuestion(item){
   }
   card.innerHTML=`<div class="stage-tag"><span class="chip ${tag.cls}">${tag.label}</span></div>
     <div class="q-text">${item.q}</div><div class="options">${optsHtml}</div>
-    ${revealed?`<div class="explanation"><div class="expl-label">${explLabel}</div><div class="expl-text">${item.explanation}</div></div>`:""}
+    ${revealed?`<div class="explanation"><div class="expl-label">${explLabel}</div><div class="expl-text">${explResolved}</div></div>`:""}
     ${panel}`;
   if(!revealed){
     card.querySelectorAll("[data-opt]").forEach(b=>{
