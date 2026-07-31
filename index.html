@@ -1,154 +1,324 @@
 <!DOCTYPE html>
+<!--
+  Kula Revise lesson engine, sunset clause skin.
+
+  Mechanics never change per series. Copy this file, repaint the variables in
+  :root and body.bright, and leave everything else alone.
+
+  Step types, all driven from the content JSON:
+    story      animated hook: marker, place, lines that fade up one at a time
+    narrative  a card of prose, which may carry a carousel, diagram, figure,
+               bullet list, stat strip, memory box or key terms
+    source     a card plus an explainer or document panel with an expander
+    question   multiple choice, or mode "order", or mode "sort"
+    summary    the running summary on a screen of its own
+    essay      the assembled skeleton, capstone only
+
+  Question text, options and explanations may use {opt0}, {opt1} and so on.
+  The renderer swaps each for the letter that option carries after the shuffle,
+  so nothing ever refers to an option by position.
+
+  Tokens replaced at build time: LESSON_TITLE, TOPIC, EYEBROW, SUBTITLE, INTRO,
+  START_FOOTER, RESULTS_EYEBROW, CLOSE_LABEL, CLOSE_BODY, RESULTS_FOOTER, SKIP_TO.
+-->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Build The Essay | The Black Power Movement | Kula Revise</title>
+<title>Build the Answer | The Black Power Movement | Kula Revise</title>
 <style>
+  /* ================= PALETTE AND TYPE ================= */
   :root {
-    --bone: #F4F1E8; --paper: #FBF9F3; --ink: #14120F;
-    --red: #B32F26; --green: #1C6B41; --gold: #C98A16; --fade: #6E6A61;
-    --line: rgba(20,18,15,0.16);
-  }
+      /* Black Power: Ink and Amber. Dark ground, two accents split by job. */
+      --paper: #1B1720;     /* page ground */
+      --sheet: #241E2C;     /* card sheet */
+      --white: #2C2536;     /* inner panels, sources, explanations */
+      --ink: #F1ECF5;       /* text */
+      --ink-soft: #AEA4BC;
+      --flame: #9C6BE6;     /* accent one: navigation and emphasis (amethyst) */
+      --on-flame: #1B1720;  /* text on a solid accent-one block */
+      --leaf: #E2A63C;      /* accent two: anything the learner earned (amber) */
+      --on-leaf: #1B1720;   /* text on a solid accent-two block */
+      --hair: rgba(241,236,245,0.16);
+      --rail: rgba(241,236,245,0.12);
+      --tint: rgba(226,166,60,0.10);
+      --tint-rule: rgba(226,166,60,0.42);
+      --slot-bg: rgba(241,236,245,0.05);
+      --chipA-bg: rgba(156,107,230,0.20); --chipA-fg: #C3A2F0;
+      --chipB-bg: rgba(174,164,188,0.16); --chipB-fg: #C6BCD4;
+      --chipN-bg: rgba(241,236,245,0.07); --chipN-fg: #B4A9C2;
+      --ev3-bg: rgba(226,166,60,0.16); --ev3-fg: #E2A63C;
+      --ok-bg: rgba(226,166,60,0.16);
+      --bad-bg: rgba(174,164,188,0.10); --bad-border: #8A7E98;
+      --btn-hover: #8553C8;
+      --start-hover: #2A2338;
+      --sans: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --serif: Georgia, 'Times New Roman', serif;
+    }
+  /* Bright light inversion, kept but not exposed. Add class "bright" to body to switch. */
+    body.bright {
+      --paper: #F1ECE2;
+      --sheet: #FAF6EE;
+      --white: #FFFDF7;
+      --ink: #241C2E;
+      --ink-soft: #5E5568;
+      --flame: #6A3FB0;
+      --on-flame: #FFFDF7;
+      --leaf: #9A6B12;
+      --on-leaf: #FFFDF7;
+      --hair: rgba(36,28,46,0.18);
+      --rail: rgba(36,28,46,0.12);
+      --tint: rgba(154,107,18,0.08);
+      --tint-rule: rgba(154,107,18,0.35);
+      --slot-bg: rgba(255,255,255,0.5);
+      --chipA-bg: #E9DEF7; --chipA-fg: #5A2E9A;
+      --chipB-bg: #E6E2EC; --chipB-fg: #4A4358;
+      --chipN-bg: #E7E2DA; --chipN-fg: #4E4658;
+      --ev3-bg: #F3E7CC; --ev3-fg: #7A5410;
+      --ok-bg: rgba(154,107,18,0.12);
+      --bad-bg: rgba(36,28,46,0.06); --bad-border: #9A8FA6;
+      --btn-hover: #57329A;
+      --start-hover: #0E0A16;
+    }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    min-height: 100vh; background: var(--bone);
-    padding: 1.5rem 1rem 3rem;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: var(--ink); line-height: 1.6; font-size: 17px;
-  }
   .container { max-width: 720px; margin: 0 auto; }
-  h1, h2, .masthead, .btn-primary, .btn-start .st { font-family: 'Arial Black', 'Helvetica Neue', Impact, sans-serif; text-transform: uppercase; }
+  /* sources set as typed minutes with a clause marker in the left margin */
+    .source { background: var(--white); border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); padding: 1.15rem 1.2rem 1.2rem 2.9rem; margin: 1.1rem 0; position: relative; }
+  /* --- ordering and sorting --- */
+    .ord-strip { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 0.9rem; }
+  /* --- carousel --- */
+    .car { margin: 1.1rem 0 0.4rem; }
 
-  .top-bar { margin-bottom: 1.5rem; }
-  .top-meta { display: flex; justify-content: space-between; align-items: baseline; font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--red); font-weight: 800; margin-bottom: 0.5rem; gap: 1rem; flex-wrap: wrap; }
-  .top-count { color: var(--fade); font-weight: 600; letter-spacing: 0.08em; }
-  .track { height: 6px; background: #fff; border: 2px solid var(--ink); overflow: hidden; }
-  .fill { height: 100%; background: var(--red); transition: width 0.35s ease; width: 0%; }
+  body {
+      min-height: 100vh;
+      background: var(--paper);
+      padding: 1.6rem 1rem 3rem;
+      font-family: var(--serif);
+      color: var(--ink);
+      line-height: 1.6;
+    }
 
-  .header-block { text-align: center; margin-bottom: 1.9rem; }
-  .eyebrow { font-size: 0.66rem; letter-spacing: 0.26em; text-transform: uppercase; color: var(--red); font-weight: 800; margin-bottom: 0.9rem; }
-  .masthead { font-size: clamp(2.2rem,8vw,3.6rem); font-weight: 900; line-height: 0.98; letter-spacing: -0.015em; }
-  .sub { font-size: 0.9rem; color: var(--fade); margin-top: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; }
-  .rule { width: 132px; height: 8px; margin: 1.3rem auto 0; background: linear-gradient(to right, var(--red) 0 33.3%, var(--ink) 33.3% 66.6%, var(--green) 66.6% 100%); }
+  /* ================= PAGE FURNITURE ================= */
+  .top-bar { margin-bottom: 1.6rem; }
+  .top-meta { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--flame); font-weight: 600; margin-bottom: 0.5rem; gap: 1rem; flex-wrap: wrap; }
+  .top-count { color: var(--ink-soft); font-weight: 400; letter-spacing: 0.04em; text-transform: none; }
+  .track { height: 2px; background: var(--rail); overflow: hidden; }
+  .fill { height: 100%; background: var(--flame); transition: width 0.35s ease; width: 0%; }
+  .nav { display: flex; justify-content: space-between; gap: 0.8rem; margin-top: 0.4rem; }
+  .ord-slot.filled { border-style: solid; background: var(--white); }
+  .quiet { color: var(--ink-soft); }
+  .quiet.pull { border-left-color: var(--hair); }
+  .hidden { display: none !important; }
+  .footer { text-align: center;  font-size: 0.76rem; color: var(--ink-soft); margin-top: 2rem; padding-top: 1.2rem; border-top: 1px solid var(--hair); line-height: 1.65; }
 
-  .intro-box { background: var(--paper); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(20,18,15,0.14); padding: 1.2rem 1.3rem; margin-bottom: 1.5rem; }
-  .intro-label { font-size: 0.64rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--red); font-weight: 800; margin-bottom: 0.5rem; }
-  .intro-text { line-height: 1.65; font-size: 0.97rem; }
-  .key-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 0.6rem; margin-bottom: 1.6rem; }
-  .key-item { display: flex; flex-direction: column; gap: 0.45rem; padding: 0.8rem; background: var(--paper); border: 2px solid var(--ink); }
-  .chip { display: inline-block; padding: 0.22rem 0.6rem; font-size: 0.64rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; width: fit-content; border: 2px solid var(--ink); }
-  .chip-argue { background: #E8D9A6; color: #5E4104; }
-  .chip-evidence { background: #C7DFCD; color: #12452A; }
-  .chip-weigh { background: var(--ink); color: var(--bone); }
-  .chip-instinct { background: #F0D5D1; color: #832018; }
-  .key-desc { font-size: 0.8rem; color: var(--fade); }
+  /* ================= COVER ================= */
+  .flourish .rule-ink { stroke: var(--ink); }
+  .flourish .rule-accent { stroke: var(--flame); }
+  .flourish .dot { fill: var(--flame); }
+  .flourish { display: block; margin: 0 auto 1.3rem; width: 100%; max-width: 260px; height: 26px; }
+  .cover { min-height: 82vh; display: flex; flex-direction: column; justify-content: center; text-align: center; padding: 1rem 0 2rem; }
+  .cover-eyebrow { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.34em; text-transform: uppercase; color: var(--flame); font-weight: 600; margin-bottom: 1.4rem; }
+  .cover-title { font-family: var(--sans); font-size: clamp(2.4rem, 9vw, 4rem); font-weight: 600; line-height: 1.04; letter-spacing: -0.02em; color: var(--ink); }
+  .cover .flourish { margin: 1.5rem auto 1.4rem; }
+  .cover-line { font-family: var(--serif); font-style: italic; font-size: clamp(1.05rem, 3vw, 1.4rem); color: var(--ink-soft); line-height: 1.6; max-width: 32rem; margin: 0 auto; }
+  .cover-sub { font-family: var(--sans); font-size: 0.76rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-soft); margin-top: 1.6rem; }
+  .cover-actions { margin-top: 2.2rem; display: flex; flex-direction: column; align-items: center; gap: 0.7rem; }
+  .btn-begin { padding: 1rem 3rem; font-size: 1.05rem; }
+  .cover .btn-skip { width: auto; justify-content: center; }
 
-  .card { background: var(--paper); border: 3px solid var(--ink); box-shadow: 7px 7px 0 rgba(20,18,15,0.13); padding: 1.5rem 1.35rem; margin-bottom: 1.4rem; }
-  .stage-tag { font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); font-weight: 800; margin-bottom: 0.85rem; }
-  .card h2 { font-size: clamp(1.25rem,4.4vw,1.6rem); font-weight: 900; line-height: 1.12; margin-bottom: 0.9rem; letter-spacing: -0.01em; }
-  .card p { font-size: 1rem; line-height: 1.7; margin-bottom: 0.9rem; }
+  /* ================= CARDS AND PROSE ================= */
+  .card { background: var(--sheet); border-top: 2px solid var(--ink); padding: 1.5rem 1.4rem 1.6rem; margin-bottom: 1.2rem; }
+  .card h2 { font-family: var(--sans); font-size: 1.38rem; font-weight: 600; line-height: 1.25; margin-bottom: 0.9rem; letter-spacing: -0.01em; }
+  .card p { font-size: 1rem; line-height: 1.72; margin-bottom: 0.9rem; }
   .card p:last-child { margin-bottom: 0; }
-  .pull { border-left: 8px solid var(--gold); padding: 0.2rem 0 0.2rem 1rem; font-weight: 700; margin: 1.1rem 0; }
-  .scenario { background: #fff; border: 3px solid var(--ink); padding: 1.15rem 1.2rem; margin: 1.1rem 0 0.2rem; font-size: 1rem; line-height: 1.7; }
-  .scenario-meta { padding: 0.55rem 0 0; font-size: 0.76rem; color: var(--fade); text-align: right; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700; }
+  .pull { border-left: 3px solid var(--flame); padding-left: 1rem; color: var(--ink); margin: 1.1rem 0; }
+  .facts { margin: 1rem 0 0.4rem; padding-left: 1.15rem; }
+  .facts li { font-size: 0.97rem; line-height: 1.7; margin-bottom: 0.5rem; }
+  .key { color: var(--leaf); font-weight: 700; }
+  .recap { background: var(--sheet); border-top: 2px solid var(--leaf); padding: 1.35rem 1.4rem 1.5rem; }
+  .recap h2 { font-family: var(--sans); font-size: 1.28rem; font-weight: 600; margin-bottom: 0.9rem; }
+  .recap ul { margin: 0; padding-left: 1.15rem; }
+  .recap li { font-size: 0.97rem; line-height: 1.75; margin-bottom: 0.55rem; }
+  .recap li:last-child { margin-bottom: 0; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); gap: 0.7rem; margin: 1.1rem 0 0.5rem; }
+  .stat { background: var(--sheet); border-top: 2px solid var(--flame); padding: 0.9rem 0.8rem; text-align: center; }
+  .stat-n {  font-size: 1.7rem; font-weight: 700; color: var(--ink); line-height: 1; }
+  .stat-l { font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin-top: 0.45rem; line-height: 1.4; }
+  .blist { list-style: none; margin: 1rem 0 0.4rem; padding: 0; }
+  .blist li { position: relative; padding-left: 1.5rem; font-size: 1rem; line-height: 1.72; margin-bottom: 0.75rem; }
+  .blist li:last-child { margin-bottom: 0; }
+  .blist li::before { content: ""; position: absolute; left: 0; top: 0.62rem; width: 8px; height: 8px; background: var(--flame); }
+  .blist li strong { color: var(--leaf); }
+  .blist.leaf li::before { background: var(--leaf); }
 
-  .source { background: #fff; border: 3px solid var(--ink); padding: 0; margin: 1.2rem 0; transform: rotate(-0.35deg); box-shadow: 5px 5px 0 rgba(20,18,15,0.13); }
-  .source-strip { height: 10px; background: linear-gradient(to right, var(--red) 0 33.3%, var(--gold) 33.3% 66.6%, var(--green) 66.6% 100%); }
-  .source-inner { padding: 1.1rem 1.2rem; }
-  .source-attr { font-size: 0.7rem; color: var(--fade); margin-bottom: 0.75rem; line-height: 1.55; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
-  .source-body { font-size: 0.98rem; line-height: 1.72; }
+  /* ================= STORY HOOK ================= */
+  .story { padding-top: 0.6rem; }
+  .story-marker { text-align: center; margin-bottom: 0.4rem; }
+  .story-num {  font-size: clamp(2.4rem, 8vw, 3.6rem); font-weight: 700; color: var(--flame); line-height: 1; letter-spacing: -0.02em; }
+  .story-unit { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--ink-soft); margin-top: 0.35rem; }
+  .story-rule { height: 1px; background: var(--hair); margin: 1.2rem 0 1.6rem; }
+  .story-line { font-size: 1.12rem; line-height: 1.85; color: var(--ink); opacity: 0; transform: translateY(6px); transition: opacity 0.5s ease, transform 0.5s ease; margin-bottom: 0.9rem; }
+  .story-line.vis { opacity: 1; transform: translateY(0); }
+  .story-line.last { color: var(--leaf); font-style: italic; }
+
+  /* ================= SOURCES AND FIGURES ================= */
+  .source .clause { position: absolute; left: 0.85rem; top: 1.15rem;  font-size: 0.74rem; font-weight: 600; color: var(--flame); letter-spacing: 0.02em; }
+  .source-attr {  font-size: 0.76rem; color: var(--ink-soft); margin-bottom: 0.7rem; line-height: 1.55; }
+  .source-body { font-size: 0.97rem; line-height: 1.75; }
   .source-body p { margin-bottom: 0.7rem; }
   .source-body p:last-child { margin-bottom: 0; }
-  .source-body em { font-style: normal; background: #F6E8B8; padding: 0 0.15rem; }
-  .toggle-btn { background: transparent; border: none; color: var(--red); cursor: pointer; font-family: inherit; font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: underline; padding: 0.7rem 0 0; }
-  .toggle-body { display: none; margin-top: 0.6rem; padding-top: 0.7rem; border-top: 2px dashed var(--line); font-size: 0.9rem; color: var(--fade); line-height: 1.65; }
+  .source-body em { color: var(--leaf); font-style: italic; }
+  .toggle-btn { background: transparent; border: none; color: var(--flame); cursor: pointer; font-family: var(--sans); font-size: 0.82rem; text-decoration: underline; padding: 0.65rem 0 0; }
+  .toggle-body { display: none; margin-top: 0.7rem; padding-top: 0.7rem; border-top: 1px dashed var(--hair); font-size: 0.9rem; color: var(--ink-soft); line-height: 1.65; }
   .toggle-body.open { display: block; }
-  .evtag { display: inline-block; margin-top: 0.9rem; font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 800; padding: 0.25rem 0.55rem; border: 2px solid var(--ink); }
-  .evtag.home { background: #E8D9A6; color: #5E4104; }
-  .evtag.ground { background: #C7DFCD; color: #12452A; }
-  .evtag.exit { background: #F0D5D1; color: #832018; }
-
-  .imgslot { margin: 1rem 0 0.2rem; padding: 1.4rem 1rem; border: 3px dashed var(--line); text-align: center; font-size: 0.78rem; color: var(--fade); background: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+  .evtag { display: inline-block; margin-top: 0.9rem; font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 0.24rem 0.6rem; }
+  .evtag.home { background: var(--chipA-bg); color: var(--chipA-fg); }
+  .evtag.ground { background: var(--chipB-bg); color: var(--chipB-fg); }
+  .evtag.exit { background: var(--ev3-bg); color: var(--ev3-fg); }
   .figure { margin: 1rem 0 0.3rem; }
-  .figure img { display: block; height: auto; border: 3px solid var(--ink); margin: 0 auto; }
+  .figure img { display: block; height: auto; border: 1px solid var(--hair); margin: 0 auto; }
   .figure.wide img { width: 100%; max-width: 460px; }
   .figure.portrait img { width: 100%; max-width: 320px; }
-  .figure figcaption { font-size: 0.76rem; color: var(--fade); margin-top: 0.5rem; line-height: 1.55; text-align: center; }
+  .figure svg { display: block; width: 100%; height: auto; }
+  .figure figcaption {  font-size: 0.76rem; color: var(--ink-soft); margin-top: 0.5rem; line-height: 1.55; text-align: center; }
 
-  .q-text { font-size: 1.1rem; line-height: 1.5; font-weight: 700; margin-bottom: 1.1rem; }
-  .options { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.1rem; }
-  .option { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.9rem 1rem; background: #fff; border: 2px solid var(--ink); cursor: pointer; font-family: inherit; text-align: left; font-size: 0.95rem; line-height: 1.55; color: var(--ink); transition: transform 0.12s, box-shadow 0.12s; width: 100%; }
-  .option:hover:not(:disabled) { transform: translate(-2px,-2px); box-shadow: 3px 3px 0 var(--ink); }
+  /* ================= QUESTIONS ================= */
+  .chip { display: inline-block; padding: 0.22rem 0.62rem; font-family: var(--sans); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; width: fit-content; }
+  .chip-argue { background: var(--chipA-bg); color: var(--chipA-fg); }
+  .chip-evidence { background: var(--chipB-bg); color: var(--chipB-fg); }
+  .chip-weigh { background: var(--leaf); color: var(--on-leaf); }
+  .chip-instinct { background: var(--chipN-bg); color: var(--chipN-fg); }
+  .stage-tag { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--flame); font-weight: 600; margin-bottom: 0.9rem; }
+  .q-text { font-size: 1.14rem; line-height: 1.5; margin-bottom: 1.15rem; }
+  .options { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.15rem; }
+  .option { display: flex; align-items: flex-start; gap: 0.8rem; padding: 0.95rem 1.05rem; background: var(--paper); border: 1px solid var(--hair); cursor: pointer; font-family: inherit; text-align: left; font-size: 0.95rem; line-height: 1.55; color: var(--ink); transition: all 0.18s; width: 100%; }
+  .option:hover:not(:disabled) { background: var(--white); border-color: var(--flame); }
   .option:disabled { cursor: default; }
-  .option.selected { box-shadow: 3px 3px 0 var(--ink); }
-  .option.correct { background: #DCEBE0; box-shadow: 3px 3px 0 var(--green); }
-  .option.wrong { background: #F5DEDB; box-shadow: 3px 3px 0 var(--red); }
-  .option.dimmed { opacity: 0.45; }
-  .opt-letter { font-weight: 900; color: var(--red); min-width: 1.1rem; }
+  .option.selected { background: var(--white); border-color: var(--ink); border-width: 2px; padding: 0.89rem 0.99rem; }
+  .option.correct { background: var(--ok-bg); border-color: var(--leaf); border-width: 2px; padding: 0.89rem 0.99rem; }
+  .option.wrong { background: var(--bad-bg); border-color: var(--bad-border); border-width: 2px; padding: 0.89rem 0.99rem; }
+  .option.dimmed { opacity: 0.5; }
+  .opt-letter {  font-weight: 600; color: var(--flame); min-width: 1.1rem; }
   .opt-text { flex: 1; }
-  .opt-mark { font-weight: 900; font-size: 1.05rem; }
-  .explanation { background: #fff; border: 3px solid var(--ink); border-left: 10px solid var(--gold); padding: 1rem 1.15rem; margin-bottom: 0.3rem; }
-  .expl-label { font-size: 0.62rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--red); font-weight: 800; margin-bottom: 0.45rem; }
-  .expl-text { line-height: 1.68; font-size: 0.93rem; }
-  .skill-callout { background: #fff; border: 3px solid var(--ink); padding: 1rem 1.15rem; margin: 1.1rem 0; }
-  .skill-list { margin: 0.5rem 0 0 0; padding-left: 1.1rem; }
-  .skill-list li { font-size: 0.92rem; line-height: 1.6; margin-bottom: 0.4rem; }
-  .skill-list li::marker { color: var(--red); font-weight: 900; }
-  .split { display: grid; grid-template-columns: 1fr; gap: 0.7rem; margin: 1.1rem 0; }
-  .split-col { border: 3px solid var(--ink); background: #fff; padding: 1rem 1.05rem; }
-  .split-col h3 { font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase; font-weight: 800; margin-bottom: 0.6rem; }
-  .split-col.claim { border-top: 10px solid var(--gold); }
-  .split-col.claim h3 { color: #7A5407; }
-  .split-col.ground { border-top: 10px solid var(--red); }
-  .split-col.ground h3 { color: var(--red); }
-  .split-col p { font-size: 0.93rem; line-height: 1.65; margin-bottom: 0.55rem; }
-  .split-col p:last-child { margin-bottom: 0; }
+  .opt-mark { font-weight: bold; font-size: 1.05rem; }
+  .explanation { background: var(--white); border-top: 1px solid var(--hair); border-left: 3px solid var(--flame); padding: 1.05rem 1.15rem; margin-bottom: 0.3rem; }
+  .expl-label { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--flame); font-weight: 600; margin-bottom: 0.5rem; }
+  .expl-text { line-height: 1.7; font-size: 0.93rem; }
+  .qbox { background: var(--white); border-top: 1px solid var(--hair); border-left: 3px solid var(--flame); padding: 1.05rem 1.2rem; margin: 1.3rem 0 1.5rem; }
+  .qbox .qlabel { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--flame); font-weight: 600; margin-bottom: 0.5rem; }
+  .qbox .qtext { font-size: 1.05rem; line-height: 1.55; }
 
-  .nav { display: flex; justify-content: space-between; gap: 0.8rem; margin-top: 0.4rem; }
-  .btn-secondary { padding: 0.7rem 1.15rem; background: transparent; border: 2px solid var(--ink); color: var(--ink); font-family: inherit; font-size: 0.85rem; cursor: pointer; font-weight: 700; }
-  .btn-secondary:hover:not(:disabled) { background: #fff; }
-  .btn-secondary:disabled { opacity: 0.3; cursor: not-allowed; }
-  .btn-primary { padding: 0.75rem 1.35rem; background: var(--ink); border: 2px solid var(--ink); color: var(--bone); font-family: inherit; font-size: 0.85rem; cursor: pointer; font-weight: 900; letter-spacing: 0.06em; }
-  .btn-primary:hover:not(:disabled) { background: var(--red); border-color: var(--red); }
-  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
-  .btn-start { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.15rem 1.3rem; background: var(--red); color: #fff; border: 3px solid var(--ink); box-shadow: 7px 7px 0 var(--ink); cursor: pointer; font-family: inherit; text-align: left; transition: transform 0.15s, box-shadow 0.15s; }
-  .btn-start:hover { transform: translate(3px,3px); box-shadow: 3px 3px 0 var(--ink); }
-  .btn-start .st { font-size: 1rem; font-weight: 900; letter-spacing: 0.02em; }
-  .btn-start .sa { font-size: 1.4rem; }
+  /* ================= ORDER AND SORT ================= */
+  .ord-slot { display: flex; align-items: center; gap: 0.7rem; width: 100%; text-align: left; padding: 0.75rem 0.9rem; background: var(--paper); border: 1px solid var(--hair); font-size: 0.94rem; color: var(--ink); font-family: inherit; cursor: pointer; -webkit-user-select: none; user-select: none; }
+  .ord-slot .ord-txt { flex: 1; }
+  .ord-slot .ord-x { color: var(--ink-soft); font-size: 0.85rem; }
+  .ord-slot:disabled { cursor: default; }
+  .ord-slot.right { border-color: var(--leaf); background: var(--ok-bg); }
+  .ord-slot.wrong { border-color: var(--bad-border); background: var(--bad-bg); }
+  .ord-rank {  font-weight: 700; color: var(--flame); min-width: 1.2rem; }
+  .ord-pool { display: flex; flex-direction: column; gap: 0.45rem; margin-bottom: 1rem; }
+  .ord-chip { text-align: left; -webkit-user-select: none; user-select: none; padding: 0.8rem 0.95rem; background: var(--paper); border: 1px solid var(--hair); color: var(--ink); font-family: inherit; font-size: 0.94rem; line-height: 1.5; cursor: pointer; }
+  .ord-chip:hover:not(:disabled) { border-color: var(--leaf); background: var(--white); }
+  .ord-chip:disabled { opacity: 0.3; cursor: default; }
+  .ord-actions { display: flex; gap: 0.6rem; margin-bottom: 0.4rem; flex-wrap: wrap; }
+  .sort-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-bottom: 1rem; }
+  .sort-col { background: var(--sheet); border-top: 2px solid var(--hair); padding: 0.8rem 0.7rem; min-height: 5rem; }
+  .sort-col h4 { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--leaf); margin-bottom: 0.6rem; }
+  .sort-tag { display: block; width: 100%; text-align: left; font-size: 0.86rem; line-height: 1.45; padding: 0.5rem 0.6rem; margin-bottom: 0.4rem; background: var(--white); border: 1px solid var(--hair); color: var(--ink); }
+  .sort-tag.right { border-color: var(--leaf); background: var(--ok-bg); }
+  .sort-tag.wrong { border-color: var(--bad-border); background: var(--bad-bg); }
+  .sort-prompt {  font-size: 0.78rem; color: var(--ink-soft); margin-bottom: 0.6rem; }
 
-  .score-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr)); gap: 0.7rem; margin-bottom: 1.3rem; }
-  .score-block { background: var(--paper); border: 3px solid var(--ink); padding: 1.2rem 0.7rem; text-align: center; }
-  .score-num { font-size: 2.5rem; font-weight: 900; color: var(--ink); line-height: 1; font-family: 'Arial Black', Impact, sans-serif; }
-  .score-num.red { color: var(--red); }
-  .score-den { font-size: 1rem; color: var(--fade); font-weight: 700; }
-  .score-label { font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--fade); margin-top: 0.5rem; font-weight: 800; }
-  .grade-desc { text-align: center; margin-bottom: 1.5rem; padding: 0 0.4rem; line-height: 1.65; font-size: 0.97rem; }
-  .breakdown { background: var(--paper); border: 3px solid var(--ink); padding: 1.2rem; margin-bottom: 1.4rem; }
-  .breakdown-label { font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); font-weight: 800; margin-bottom: 1rem; text-align: center; }
-  .bd-row { display: grid; grid-template-columns: 1fr 100px 46px; gap: 0.6rem; align-items: center; margin-bottom: 0.7rem; font-size: 0.85rem; }
-  .bd-name { font-weight: 700; }
-  .bd-bar { height: 12px; background: #fff; border: 2px solid var(--ink); overflow: hidden; }
-  .bd-fill { height: 100%; background: var(--green); transition: width 0.4s; }
-  .bd-score { color: var(--fade); text-align: right; font-weight: 800; }
+  /* ================= CAROUSEL ================= */
+  .car [data-car-next] { border-color: var(--flame); color: var(--flame); }
+  .car-frame { background: var(--white); border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); padding: 1.2rem 1.2rem 1.3rem; min-height: 8.5rem; }
+  .car-count { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--flame); font-weight: 600; margin-bottom: 0.6rem; }
+  .car-body { font-size: 1rem; line-height: 1.72; }
+  .car-body strong { color: var(--leaf); }
+  .car-nav { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-top: 0.7rem; }
+  .car-dots { display: flex; gap: 0.35rem; align-items: center; }
+  .car-hint { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); }
+  .car-prompt { display: flex; align-items: baseline; gap: 0.5rem; font-family: var(--sans); font-size: 0.82rem; color: var(--flame); margin-bottom: 0.55rem; }
+  .car-prompt .cp-mark { font-size: 1rem; line-height: 1; }
+  .car-prompt.done { color: var(--leaf); }
+  .car-dot.read { background: var(--leaf); }
+  .car-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--hair); border: none; padding: 0; cursor: pointer; }
+  .car-dot.on { background: var(--flame); }
 
-  .essaypanel { background: #fff; border: 3px solid var(--ink); border-top: 10px solid var(--green); padding: 1.1rem 1.2rem; margin-top: 1.1rem; }
-  .essaypanel-label { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--green); font-weight: 800; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.5rem; }
-  .essaypanel p { font-size: 0.91rem; line-height: 1.72; margin-bottom: 0.7rem; text-indent: 1.1rem; }
+  /* ================= KEY TERMS AND MEMORY ================= */
+  .terms { margin-top: 1.3rem; padding-top: 1rem; border-top: 1px solid var(--hair); }
+  .terms-label { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--leaf); font-weight: 600; margin-bottom: 0.7rem; }
+  .term-row { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+  .term-btn { font-family: var(--sans); font-size: 0.84rem; padding: 0.42rem 0.75rem; background: transparent; border: 1px solid var(--hair); color: var(--ink); cursor: pointer; line-height: 1.3; }
+  .term-btn:hover { border-color: var(--leaf); }
+  .term-btn.open { background: var(--ok-bg); border-color: var(--leaf); }
+  .term-btn .plus { color: var(--leaf); font-family: var(--sans); font-weight: 600; margin-left: 0.4rem; }
+  .term-def { display: none; margin-top: 0.8rem; padding: 0.9rem 1rem; background: var(--white); border-top: 1px solid var(--hair); border-left: 3px solid var(--leaf); font-size: 0.92rem; line-height: 1.7; }
+  .term-def.open { display: block; }
+  .term-def strong {  font-size: 0.86rem; display: block; margin-bottom: 0.3rem; color: var(--leaf); }
+  .memory { background: var(--tint); border-top: 1px solid var(--tint-rule); padding: 1rem 1.15rem; margin: 1.1rem 0; }
+  .memory-label { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--leaf); font-weight: 600; margin-bottom: 0.5rem; }
+  .memory-label.memory-toggle { display: flex; align-items: center; justify-content: space-between; gap: 1rem; cursor: pointer; margin-bottom: 0; }
+  .memory-label.memory-toggle:hover { color: var(--ink); }
+  .memory-label .mplus { font-size: 0.95rem; line-height: 1; }
+  .memory.open .memory-label.memory-toggle { margin-bottom: 0.7rem; }
+  .memory p { font-size: 0.95rem; line-height: 1.7; margin-bottom: 0.6rem; }
+  .memory p:last-child { margin-bottom: 0; }
+
+  /* ================= RUNNING SUMMARY ================= */
+  .essaypanel { background: var(--tint); border-top: 1px solid var(--tint-rule); padding: 1.15rem 1.2rem; margin-top: 1.1rem; }
+  .essaypanel p { font-size: 0.92rem; line-height: 1.72; margin-bottom: 0.7rem; text-indent: 1.1rem; }
   .essaypanel p:first-of-type { text-indent: 0; }
   .essaypanel p:last-child { margin-bottom: 0; }
-  .finalessay { background: #fff; border: 3px solid var(--ink); padding: 1.4rem 1.3rem; margin: 1.1rem 0; }
-  .finalessay .fq { font-weight: 800; color: var(--red); font-size: 0.95rem; margin-bottom: 1rem; line-height: 1.5; padding-bottom: 0.9rem; border-bottom: 3px solid var(--ink); }
-  .finalessay p { font-size: 0.95rem; line-height: 1.78; margin-bottom: 0.9rem; text-indent: 1.2rem; }
+  .finalessay { background: var(--white); border-top: 1px solid var(--hair); border-bottom: 1px solid var(--hair); padding: 1.5rem 1.4rem; margin: 1.1rem 0; }
+  .finalessay .fq {  font-weight: 600; color: var(--flame); font-size: 0.97rem; margin-bottom: 1rem; line-height: 1.5; padding-bottom: 0.9rem; border-bottom: 1px solid var(--hair); }
+  .finalessay p { font-size: 0.96rem; line-height: 1.78; margin-bottom: 0.9rem; text-indent: 1.2rem; }
   .finalessay p:first-of-type { text-indent: 0; }
   .finalessay p:last-child { margin-bottom: 0; }
-  .qbox { background: #fff; border: 3px solid var(--ink); border-left: 10px solid var(--red); padding: 1.05rem 1.2rem; margin: 1.2rem 0 1.5rem; }
-  .qbox .qlabel { font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); font-weight: 800; margin-bottom: 0.5rem; }
-  .qbox .qtext { font-size: 1.02rem; line-height: 1.6; font-weight: 700; }
-  .hidden { display: none !important; }
-  .footer { text-align: center; font-size: 0.76rem; color: var(--fade); margin-top: 2rem; padding-top: 1.2rem; border-top: 3px solid var(--line); line-height: 1.6; }
-  @media (min-width: 620px) { .split { grid-template-columns: 1fr 1fr; } }
-</style>
+
+  /* ================= RESULTS ================= */
+  .header-block { text-align: center; margin-bottom: 2rem; }
+  .eyebrow { font-family: var(--sans); font-size: 0.68rem; letter-spacing: 0.24em; text-transform: uppercase; color: var(--flame); font-weight: 600; margin-bottom: 0.85rem; }
+  .masthead { font-family: var(--sans); font-size: clamp(1.9rem,5.4vw,2.9rem); font-weight: 600; line-height: 1.14; letter-spacing: -0.015em; }
+  .sub { font-size: 0.98rem; color: var(--ink-soft); margin-top: 0.6rem; }
+  .score-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(130px,1fr)); gap: 0.9rem; margin-bottom: 1.3rem; }
+  .score-block { background: var(--sheet); border-top: 2px solid var(--ink); padding: 1.25rem 0.8rem; text-align: center; }
+  .score-num { font-size: 2.4rem; font-weight: 700; color: var(--ink); line-height: 1; }
+  .score-num.red { color: var(--flame); }
+  .score-den { font-size: 1.05rem; color: var(--ink-soft); font-weight: 400; }
+  .score-label { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); margin-top: 0.5rem; font-weight: 600; }
+  .grade-desc { text-align: center; margin-bottom: 1.5rem; padding: 0 0.5rem; line-height: 1.68; }
+  .breakdown { background: var(--sheet); border-top: 2px solid var(--ink); padding: 1.25rem; margin-bottom: 1.3rem; }
+  .breakdown-label { font-family: var(--sans); font-size: 0.66rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--leaf); font-weight: 600; margin-bottom: 1rem; text-align: center; }
+  .bd-row { display: grid; grid-template-columns: 1fr 110px 46px; gap: 0.7rem; align-items: center; margin-bottom: 0.7rem; font-size: 0.86rem; }
+  .bd-name { font-size: 0.92rem; }
+  .bd-bar { height: 8px; background: var(--rail); overflow: hidden; }
+  .bd-fill { height: 100%; background: var(--leaf); transition: width 0.4s; }
+  .bd-score { color: var(--ink-soft); text-align: right; font-weight: 700; }
+
+  /* ================= BUTTONS ================= */
+  .btn-secondary { padding: 0.72rem 1.2rem; background: transparent; border: 1px solid var(--hair); color: var(--ink); font-family: var(--sans); font-size: 0.88rem; cursor: pointer; }
+  .btn-secondary:hover:not(:disabled) { background: var(--sheet); }
+  .btn-secondary:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-primary { padding: 0.76rem 1.5rem; background: var(--flame); border: none; color: var(--on-flame); font-family: var(--sans); font-size: 0.93rem; cursor: pointer; font-weight: 600; }
+  .btn-primary:hover:not(:disabled) { background: var(--btn-hover); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-skip { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 0.6rem; padding: 0.85rem 1.35rem; background: transparent; border: 1px solid var(--hair); color: var(--ink-soft); cursor: pointer; font-family: var(--sans); text-align: left; transition: all 0.2s; }
+  .btn-skip:hover { color: var(--ink); border-color: var(--leaf); }
+  .btn-skip .sk-t { font-size: 0.92rem; }
+  .btn-skip .sk-a { font-size: 1.1rem; color: var(--leaf); }
+  .btn-small { font-family: var(--sans); font-size: 0.82rem; padding: 0.55rem 1rem; background: transparent; border: 1px solid var(--hair); color: var(--ink); cursor: pointer; }
+  .btn-small:hover:not(:disabled) { border-color: var(--leaf); }
+  .btn-small:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ================= POP UPS ================= */
+  .modal-back { position: fixed; inset: 0; background: rgba(8,16,28,0.72); display: flex; align-items: center; justify-content: center; padding: 1.2rem; z-index: 50; }
+  .modal { background: var(--sheet); border-top: 3px solid var(--flame); max-width: 24rem; width: 100%; padding: 1.6rem 1.5rem 1.5rem; text-align: center; }
+  .modal-label { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--leaf); font-weight: 600; margin-bottom: 0.7rem; }
+  .modal h3 { font-family: var(--sans); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.7rem; }
+  .modal p { font-size: 1rem; line-height: 1.7; color: var(--ink); margin-bottom: 1.3rem; }
+
+  </style>
 </head>
 <body>
 <div class="container">
@@ -159,23 +329,22 @@
   </div>
 
   <div id="start-screen">
-    <div class="header-block">
-      <div class="eyebrow">Kula Revise &middot; Grade 12 History &middot; Black Power</div>
-      <h1 class="masthead">Build The Essay</h1>
-      <div class="sub">NSC November 2024, Paper 1, Question 6 &middot; Lesson 5 of 5</div>
-      <div class="rule"></div>
+    <div class="cover">
+      <div class="cover-eyebrow">The capstone</div>
+      <h1 class="cover-title">Build the Answer</h1>
+      <svg class="flourish" viewBox="0 0 260 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <line class="rule-ink" x1="0" y1="2" x2="130" y2="24" stroke-width="1.4"/>
+        <line class="rule-accent" x1="260" y1="2" x2="130" y2="24" stroke-width="1.4"/>
+        <circle class="dot" cx="130" cy="24" r="2.4"/>
+      </svg>
+      <div class="cover-line">One real exam question. Eight decisions. The line you carried through four lessons becomes the answer here.</div>
+      <div class="cover-sub">Answering the 2022 exam question &middot; Lesson 5 of 5</div>
+      <div class="cover-actions">
+        <button class="btn-primary btn-begin" id="begin-btn">Begin &rarr;</button>
+        <button class="btn-skip hidden" id="skip-btn"><span class="sk-t">Skip the opening if you have done this lesson before</span><span class="sk-a">&rarr;</span></button>
+      </div>
     </div>
-    <div class="intro-box">
-      <div class="intro-label">Where we are</div>
-      <p class="intro-text">This is a real question from a real National Senior Certificate paper, and the answer you are about to assemble is built against the actual marking guidelines the Department published for it. Eight decisions. Each one offers a version that argues, a version that only describes, and a version that takes the wrong line. Choose well and you finish holding a complete fifty mark essay that you built yourself.</p>
-    </div>
-    <div class="key-row">
-      <div class="key-item"><span class="chip chip-argue">Argue</span><span class="key-desc">Take a clear line and hold it</span></div>
-      <div class="key-item"><span class="chip chip-evidence">Evidence</span><span class="key-desc">Back the claim with specific fact</span></div>
-      <div class="key-item"><span class="chip chip-weigh">Weigh</span><span class="key-desc">Judge it, both sides, then decide</span></div>
-    </div>
-    <button class="btn-start" id="begin-btn"><span class="st">Start with the argument</span><span class="sa">&rarr;</span></button>
-    <div class="footer">About 25 minutes. Nine questions, all marked. Have the four sentences from Lessons 1 to 4 in your head before you start: this lesson turns them into paragraphs.</div>
+    <div class="footer">About 30 minutes.</div>
   </div>
 
   <div id="flow-screen" class="hidden">
@@ -186,11 +355,27 @@
     </div>
   </div>
 
+  <div class="modal-back hidden" id="added-modal">
+    <div class="modal">
+      <div class="modal-label">Added to your skeleton</div>
+      <p id="added-text"></p>
+      <button class="btn-primary" id="added-close">Got it</button>
+    </div>
+  </div>
+
+  <div class="modal-back hidden" id="done-modal">
+    <div class="modal">
+      <div class="modal-label">Lesson complete</div>
+      <h3>Build the Answer</h3>
+      <p>Click on the arrow above to continue to the next lesson.</p>
+      <button class="btn-primary" id="done-close">Got it</button>
+    </div>
+  </div>
+
   <div id="results-screen" class="hidden">
     <div class="header-block">
-      <div class="eyebrow">The series is complete</div>
-      <h1 class="masthead" style="font-size: clamp(1.9rem,6vw,2.9rem);">Where you stand</h1>
-      <div class="rule"></div>
+      <div class="eyebrow">Capstone complete</div>
+      <h1 class="masthead" style="font-size: clamp(1.7rem,4.8vw,2.5rem);">Where You Stand</h1>
     </div>
     <div class="score-row">
       <div class="score-block"><div class="score-num"><span id="r-correct">0</span><span class="score-den">/<span id="r-total">0</span></span></div><div class="score-label">Argument moves</div></div>
@@ -198,214 +383,26 @@
       <div class="score-block"><div class="score-num red" id="r-band">-</div><div class="score-label">Standard</div></div>
     </div>
     <div class="grade-desc" id="r-desc"></div>
-    <div class="breakdown"><div class="breakdown-label">By essay skill</div><div id="r-breakdown"></div></div>
+    <div class="breakdown"><div class="breakdown-label">By skill</div><div id="r-breakdown"></div></div>
     <div class="card">
-      <div class="stage-tag">What you have</div>
-      <p>You have a full answer to a real NSC essay question, built one decision at a time, with every body point mapped to something the official marking guidelines reward.</p><p>Two things left to do before the examination. Write it out by hand, in your own words, in three pages and about forty minutes, because knowing the shape and being able to produce it under time are different skills. Then sit Knowledge Check 2, the second set of questions on the facts, to see what has stuck across the five lessons.</p><p class="pull">In the examination nobody will offer you three options. The reason this works is that you now know what the wrong two look like.</p>
+      <div class="stage-tag">Beyond the exam</div>
+      You did not memorise an answer. You built one, decision by decision, from a stance to a verdict. That is how any argument worth making is put together, in an exam hall or long after it.
     </div>
-    <div class="nav" style="justify-content: center;"><button class="btn-primary" id="redo-btn">&#8635; Restart lesson</button></div>
-    <div class="footer">That is the Black Power series. Next in Topic 3: the United States Civil Rights Movement, which is examined as a source-based question rather than an essay.</div>
+    <div class="nav" style="justify-content: center; gap: 0.7rem;"><button class="btn-secondary" id="redo-btn">&#8635; Restart lesson</button><button class="btn-primary" id="finish-btn">Finish &rarr;</button></div>
+    <div class="footer">Click on the arrow above to finish the unit.</div>
   </div>
 </div>
 
 <script>
-const QUESTION = "'The Black Power Movement adopted a militant approach to challenge discrimination against African Americans in the USA in the 1960s.' Critically discuss this statement in the context of the Black Power philosophy. Use relevant historical evidence to support your line of argument. [50] &middot; NSC History Paper 1, November 2024, Question 6";
 
-const ESSAY_SCREEN = {"label": "The finished essay", "heading": "Everything you built", "intro": "Here is the whole answer, in order, as you assembled it. Read it once for the shape and once for the joins between paragraphs, because the joins are where a line of argument is either sustained or lost.", "outro": "In the examination you would write this in your own words and in your own handwriting, and it would be shorter in places and longer in others. The shape is exactly this: a stance in the introduction, the philosophy established before the militancy is judged, the strongest evidence for the statement conceded honestly, a counter-argument that qualifies rather than retracts, and a conclusion that decides."};
+const BANDS = [{"min": 84, "band": "Excellent", "desc": "You have the shape of the answer cold. Move on."}, {"min": 68, "band": "Strong", "desc": "A firm grip. Reread the one or two you missed."}, {"min": 50, "band": "Solid", "desc": "The shape is there. Go back over the cards you slipped on."}, {"min": 34, "band": "Patchy", "desc": "Some of it is landing, some slipping. Work the lesson through once more, slowly."}, {"min": 0, "band": "Start again", "desc": "A low score before you study a topic is a normal starting line, not a warning. Begin at the first card."}];
+const FLOW = [{"type": "narrative", "stage": "Recognise", "html": "<div class=\"stage-tag\">The real question</div><h2>This Is What Came Up</h2><p>Not a practice question dressed up to look real. This is Question 6 from History Paper 1, May and June 2022.</p><div class=\"source\"><span class=\"clause\">Q6</span><div class=\"source-attr\">NSC History P1, May and June 2022, Question 6. Department of Basic Education.</div><div class=\"source-body\"><p>Explain to what extent the Black Power philosophy succeeded in organising African Americans to challenge discrimination and segregation in the United States of America in the 1960s. Use relevant evidence to support your line of argument. [50]</p></div></div><p>Over this lesson you build an answer to it, one decision at a time. The line you carried through four lessons becomes the answer here.</p>"}, {"type": "narrative", "stage": "Destabilise", "html": "<div class=\"stage-tag\">Before you build</div><h2>How This Answer Is Judged</h2><p>This is not judged by ticking facts and adding them up. It is read as one thing: a clear line of argument, held from the first line to the last, backed by real evidence, ending in a weighed verdict.</p><p>What you know and how you argue are judged as one answer, not as two separate scores. A page full of true facts with no line still lands low.</p><p>So the command word decides everything. Get that right first, then let every paragraph serve it.</p>"}, {"type": "question", "stage": "Act", "level": "Argue", "q": "The command word is to what extent. Which opening answers it, rather than dodging it?", "options": ["It succeeded to a real but limited extent, and here is how far and why", "The Black Power philosophy was a very important part of American history in the 1960s", "Yes, the Black Power philosophy did succeed in organising African Americans in the 1960s", "The Black Power philosophy had many leaders, ideas and organisations across the whole decade"], "correct": 0, "explanation": "{opt0} answers how far, which is exactly what to what extent demands, and it promises reasons. {opt2} is a flat yes: it takes a side but skips the how far. That leaves the command word only half met."}, {"type": "question", "stage": "Act", "level": "Argue", "build": true, "part": "The Black Power philosophy succeeded to a real but limited extent. It organised African Americans around pride, self-reliance and self-defence, and won lasting gains, yet it never reached the poverty and policing that had produced it.", "q": "Decision 1. Your introduction has to take a stance. Which one does?", "options": ["The Black Power philosophy succeeded to a real but limited extent. It organised African Americans around pride, self-reliance and self-defence, and won lasting gains, yet it never reached the poverty and policing that had produced it.", "The Black Power philosophy grew in the United States during the 1960s. It involved leaders such as Stokely Carmichael and Malcolm X, and organisations such as the Black Panther Party, and it carried on well into the following decade.", "The Black Power philosophy failed completely. It achieved nothing at all for African Americans, changed no single life for the better, and left the United States exactly as segregated and unequal as it had been before that decade."], "correct": 0, "explanation": "{opt0} says how far and points at what the rest will prove, so it takes a stance. {opt1} is all true and picks no side, so an opening like it only gives background. Start there and there's no line to defend."}, {"type": "question", "stage": "Act", "level": "Evidence", "build": true, "part": "By the 1960s legal segregation was falling in the South, but in the northern ghettos poverty, poor housing and police brutality survived untouched. It was in that gap, where the Civil Rights laws never reached, that the movement took hold.", "q": "Decision 2. Your context paragraph, on the conditions. Which one sets up your line instead of just listing facts?", "options": ["By the 1960s legal segregation was falling in the South, but in the northern ghettos poverty, poor housing and police brutality survived untouched. It was in that gap, where the Civil Rights laws never reached, that the movement took hold.", "The Civil Rights Act was passed in 1964 and the Voting Rights Act in 1965. African Americans lived in ghettos in the northern cities, where there was much poverty and unemployment, and the police were often violent towards them.", "The Civil Rights laws of the 1960s had already solved the problems of the northern ghettos. Poverty, poor housing and police brutality were gone, so the movement grew up in a country that had no real grievances left to answer."], "correct": 0, "explanation": "{opt0} uses the conditions to explain why the movement arose, so the facts serve the line. {opt1} is all correct, but it only lists the facts and points nowhere, so it just sets the scene. Make the conditions do a job in the answer."}, {"type": "question", "stage": "Act", "level": "Evidence", "build": true, "part": "The philosophy organised people first by changing how they saw themselves. Carmichael's call for self-definition, pride and control of their own institutions, and the slogan Black is beautiful, gave people a reason to act together.", "q": "Decision 3. Your first body paragraph, on the philosophy. Which version argues its effect?", "options": ["The philosophy organised people first by changing how they saw themselves. Carmichael's call for self-definition, pride and control of their own institutions, and the slogan Black is beautiful, gave people a reason to act together.", "Stokely Carmichael made Black Power a public chant on a march in Mississippi in 1966. He believed in self-reliance and black pride, and the movement used the slogan Black is beautiful to promote African hairstyles and clothing.", "The philosophy told African Americans to give up on pride and identity and to wait quietly for white America to grant them their rights in its own good time, exactly as the older civil rights movement had always asked of them."], "correct": 0, "explanation": "{opt0} says what the philosophy did to people, so it drives the line. {opt1} is true but only narrates Carmichael and the slogan, so it stays background. Say what the idea achieved, not only that it existed."}, {"type": "question", "stage": "Act", "level": "Weigh", "build": true, "part": "Malcolm X's case for self-defence organised the angriest, who would never kneel for a beating, but it also frightened off allies and split the movement. It added force and lost breadth, so its organising was real yet double-edged.", "q": "Decision 4. Malcolm X and self-defence. Which version weighs how far this organised people?", "options": ["Malcolm X's case for self-defence organised the angriest, who would never kneel for a beating, but it also frightened off allies and split the movement. It added force and lost breadth, so its organising was real yet double-edged.", "Malcolm X rose through the Nation of Islam and argued for armed self-defence rather than non-violence. He broke with the Nation in 1964, made a pilgrimage to Mecca, and was assassinated in Harlem in early 1965 before Black Power.", "Malcolm X organised every single African American behind him and united the whole movement completely, so that after his speeches there was no disagreement left at all about how the long struggle for freedom should now be fought."], "correct": 0, "explanation": "{opt0} weighs it: force gained, breadth lost, organising real but mixed. {opt1} is a neat account of his life that never judges anything, so it stays narrative. A to what extent answer has to weigh and say how far."}, {"type": "question", "stage": "Act", "level": "Weigh", "build": true, "part": "The Panthers organised people most through the breakfasts and clinics, not the rifles. The guns drew the state's fire and broke the party, while the survival programmes built the loyalty. As organising, the programmes did more than the weapons.", "q": "Decision 5. The Black Panther Party. Which version weighs the guns against the programmes?", "options": ["The Panthers organised people most through the breakfasts and clinics, not the rifles. The guns drew the state's fire and broke the party, while the survival programmes built the loyalty. As organising, the programmes did more than the weapons.", "The Black Panther Party was founded in Oakland in 1966 by Huey Newton and Bobby Seale. It adopted a Ten Point Program, patrolled the police, and ran free breakfasts, clinics and literacy projects in Black communities across several cities.", "The Black Panther Party organised nobody at all. Its programmes reached no one, its patrols changed nothing, and it left the communities it worked in exactly as they had been, so the whole party can be set aside completely."], "correct": 0, "explanation": "{opt0} weighs the two halves and decides which organised more, which is the judgement the question wants. {opt1} is a correct list of what the party did, but it weighs nothing, so it stays background. Decide, and back the decision."}, {"type": "question", "stage": "Act", "level": "Evidence", "build": true, "part": "The gains are the firmest evidence of success: the most open forms of discrimination ended, more African Americans won public office, housing and facilities improved, and affirmative action opened jobs and college places once closed.", "q": "Decision 6. The gains, as evidence of success. Which version puts them to work?", "options": ["The gains are the firmest evidence of success: the most open forms of discrimination ended, more African Americans won public office, housing and facilities improved, and affirmative action opened jobs and college places once closed.", "After the movement, several things in the United States changed for African Americans. Discrimination was reduced, some people were elected to office, and there were new policies. Other developments also took place over the years that followed.", "The movement produced no gains that can be measured, so there is nothing to weigh on the side of success at all. Nothing improved for African Americans in office, in housing or in employment, and the record shows only failure."], "correct": 0, "explanation": "{opt0} names the gains and ties them to the success claim, so the evidence does a job. {opt1} gestures at change but names almost nothing, and vague evidence proves little. Be specific, and point each gain at the line."}, {"type": "question", "stage": "Act", "level": "Weigh", "build": true, "part": "Against all this, the deepest problems survived: poverty, unequal policing, and the party's own destruction by the state. Yet organising a people to act, and winning pride and office, is real success even where the economy stayed unchanged.", "q": "Decision 7. The case against your own line, and your reply. Which version does both?", "options": ["Against all this, the deepest problems survived: poverty, unequal policing, and the party's own destruction by the state. Yet organising a people to act, and winning pride and office, is real success even where the economy stayed unchanged.", "There are some arguments on the other side of this question too. Poverty carried on after the movement, and the Black Panther Party was broken by the FBI, and various other difficulties remained for African Americans in the years afterwards.", "There is no case against success worth making, because the movement solved every problem African Americans faced. Poverty ended, policing became fair, and nothing was left for any later movement to take up after the 1960s had closed."], "correct": 0, "explanation": "{opt0} states the strongest counter and then answers it, which is what to what extent needs before a verdict. {opt1} raises the counter but never answers it, so the objection still stands."}, {"type": "question", "stage": "Act", "level": "Argue", "build": true, "part": "So the Black Power philosophy succeeded to a real but limited extent. It organised African Americans around pride and self-defence and won lasting gains in identity and office, even as the poverty that bred it outlived the movement.", "q": "Decision 8. Your conclusion. Which one lands a verdict?", "options": ["So the Black Power philosophy succeeded to a real but limited extent. It organised African Americans around pride and self-defence and won lasting gains in identity and office, even as the poverty that bred it outlived the movement.", "In conclusion, the Black Power philosophy did a number of things during the 1960s and afterwards. It had several leaders and organisations, and it had both successes and some failures over the course of the years that it was active.", "In conclusion, the Black Power philosophy either succeeded completely or failed completely, and it is not really possible to say which of the two it was, so no clear verdict can be reached on this question in the end at all."], "correct": 0, "explanation": "{opt0} lands the verdict the whole answer has built, in the words of the command. {opt1} sums up without deciding, and a conclusion that picks no side undoes the case. End on the how far, not on a shrug."}, {"type": "essay", "stage": "Act"}, {"type": "narrative", "stage": "Transfer", "html": "<div class=\"stage-tag\">Before you go</div><h2>What You Are Holding Is a Skeleton</h2><p>It has the right shape: a stance, the conditions, the evidence in order, a counter-case and a weighed verdict.</p><p>It is about <span class=\"key\">299 words</span>. A strong answer to a fifty-mark question runs two to three times longer, in full sentences of your own.</p><p>Learn the shape, not these words. The shape is what the question rewards, and it fits any version of it.</p>"}, {"type": "narrative", "stage": "Transfer", "html": "<div class=\"stage-tag\">Before you go</div><h2>What It Leaves Out</h2><p>All of this sat in Lessons 1 to 4 and none of it reached the answer:</p><p>The Kerner Report of 1968. Malcolm X's break with the Nation and his pilgrimage to Mecca. The exact points of the Ten Point Program. COINTELPRO and the killing of Fred Hampton. Other figures such as Angela Davis. The student movements that carried the ideas on.</p><p>You cannot fit everything, and the question does not need everything. A real answer picks a few of these as its own knowledge and lets the rest go.</p>"}, {"type": "narrative", "stage": "Transfer", "html": "<div class=\"stage-tag\">Before you go</div><h2>Do Not Learn This Off by Heart</h2><p>This answer fits one question. The paper will ask this content another way, and a memorised paragraph will not bend to fit.</p><p>Here is a different angle to build a fresh line for, from the very same four lessons:</p><div class=\"memory\"><div class=\"memory-label\">Try this one</div><p>To what extent was Malcolm X, rather than the Black Panther Party, the true source of the Black Power movement in the 1960s?</p></div><p>Start again from the command word. Decide how far, then choose which of the same facts serve that new line.</p>"}];
 
-const BANDS = [
-  {
-    "min": 85,
-    "band": "7",
-    "desc": "You are arguing at the top level. Your line holds and your evidence is doing work. Push now on the counter-argument: the top band goes to answers that take the other side seriously before deciding."
-  },
-  {
-    "min": 70,
-    "band": "6",
-    "desc": "A relevant line of argument, defended with evidence. The gap between this and the top band is usually the weighing: go back over the questions you missed and look at what the strongest option did that yours did not."
-  },
-  {
-    "min": 55,
-    "band": "5",
-    "desc": "You are making an argument, but it is not yet holding all the way through. Watch for the options that only describe. Describing is what loses the most marks in Section B."
-  },
-  {
-    "min": 40,
-    "band": "4",
-    "desc": "The question is recognisable in your answers, but content is standing in for argument. Redo this lesson and, before you choose, ask of each option: does this take a position, or does it only tell me what happened?"
-  },
-  {
-    "min": 0,
-    "band": "3",
-    "desc": "Content is relating to the question but not yet answering it. Work through the lesson again slowly and read every explanation. The move you are after is small: turn each fact into a claim about the fact."
-  }
-];
-
-const FLOW = [
-  {
-    "type": "narrative",
-    "stage": "Recognise",
-    "html": "\n<div class=\"stage-tag\">The question</div>\n<h2>This is the real thing</h2>\n<div class=\"qbox\"><div class=\"qlabel\">NSC History Paper 1, November 2024, Question 6</div>\n<div class=\"qtext\">'The Black Power Movement adopted a militant approach to challenge discrimination against African Americans in the USA in the 1960s.'<br><br>Critically discuss this statement in the context of the Black Power philosophy. Use relevant historical evidence to support your line of argument. [50]</div></div>\n<p>Read it twice. There are three instructions hidden in it and most people only follow one.</p>\n<p>The first is the command word. The second is the phrase 'in the context of the Black Power philosophy', which is not decoration: it tells you what to measure the militancy against, and an answer that never says what the philosophy was has not answered this question however much it knows about the Panthers.</p>\n<p>The third is 'in the 1960s'. Angela Davis's trial, the collapse of the Panthers into the 1970s, and everything after it earns nothing here. Stay inside the decade.</p>\n"
-  },
-  {
-    "type": "question",
-    "stage": "Recognise",
-    "level": "Weigh",
-    "q": "'Critically discuss' is the command word. What does it require that 'discuss' would not?",
-    "options": [
-      "A counter-argument before the conclusion, and a judgement that decides between the two.",
-      "More detail and more evidence than an ordinary discussion question would ask for.",
-      "A negative verdict, since being critical means finding fault with the statement given.",
-      "A balanced description of both sides, with the marker left to draw the conclusion."
-    ],
-    "correct": 0,
-    "explanation": "'Critically discuss' asks for two things: you must take the other side seriously, and you must still decide. Option {opt1} confuses critical with detailed, and a longer answer that never judges stays in the middle. Option {opt2} is the most common misreading, since critical means evaluative and not hostile. Option {opt3} stops one step short, and an essay that lays out both sides and declines to decide cannot reach the top bands."
-  },
-  {
-    "type": "narrative",
-    "stage": "Destabilise",
-    "html": "\n<div class=\"stage-tag\">How it is actually marked</div>\n<h2>Two readings, one mark</h2>\n<p>Your essay is read twice. The first reading decides the content level: has the question been answered, is the material relevant. The second decides the presentation level: is there a planned argument, is it sustained, is the conclusion drawn from the evidence. The two meet on a matrix and that intersection is your mark.</p>\n<p class=\"pull\">This is why you can know everything about the Black Panther Party and still finish on twenty-six. Full content, weak presentation, and the matrix takes the mark down to meet the weaker of the two.</p>\n<p>The eight decisions ahead are all presentation decisions. Every one of them offers you a version that would earn content marks and nothing else. That version is always the one that only describes, and it is what the marking guidelines mean when they warn against regurgitating content instead of arguing.</p>\n"
-  },
-  {
-    "type": "question",
-    "stage": "Act",
-    "level": "Argue",
-    "build": true,
-    "part": "The Black Power Movement did adopt a militant approach, but militancy was the method it reached for rather than the philosophy it was built on. Black Power was first a demand for self-definition, self-reliance and control by African Americans over their own communities, and the militancy of Malcolm X, of Stokely Carmichael and of the Black Panther Party makes sense only as one expression of that demand. This essay will argue that the statement is accurate as far as it goes: it describes the movement's method accurately while missing its purpose. It will set out the conditions the movement grew from, establish what the Black Power philosophy entailed, examine the militant approach in the words of Malcolm X and the actions of the Black Panther Party, and weigh that militancy against the self-empowerment programmes the same movement delivered.",
-    "q": "Decision 1. Your introduction. Which sentence sets up an essay that can reach the top of the matrix?",
-    "options": [
-      "The statement is accurate about the method but not the purpose: militancy was how Black Power acted, self-determination was what it wanted.",
-      "The Black Power Movement was active in the United States during the 1960s and used a number of different approaches to discrimination.",
-      "The statement is wrong, because the Black Power Movement was a peaceful cultural movement that has been misrepresented by all of its critics."
-    ],
-    "correct": 0,
-    "explanation": "Option {opt0} takes a stance and tells the marker what the essay will prove, which is what the guidelines mean by an independent line of argument. Option {opt1} is the introduction most people write: true, safe, and containing no argument at all, so the presentation level is capped from the first line. Option {opt2} takes a stance you cannot defend, because you are about to concede that the Panthers armed patrols and that nine police officers were killed. An unsustainable stance is worse than a cautious one."
-  },
-  {
-    "type": "question",
-    "stage": "Act",
-    "level": "Evidence",
-    "build": true,
-    "part": "The movement grew out of conditions that the Civil Rights Movement's victories had not reached. The Civil Rights Act of 1964 and the Voting Rights Act of 1965 dismantled the segregation laws of the southern states, but by 1965 roughly half of all African Americans lived in the inner cities of the north, where there had never been segregation laws to repeal. There they faced poor housing, under-resourced schools and high unemployment, and above all police brutality: when President Johnson's own commission of inquiry surveyed the cities after the riots of 1967, it ranked police practices as the most intense grievance of all, and concluded that white institutions had created and still maintained the ghetto. African Americans became impatient with the slow pace of change under the Civil Rights Movement, and the riots that swept Watts in 1965, Detroit and Newark in 1967 and more than a hundred cities after the assassination of Martin Luther King Jr in 1968 measured that impatience.",
-    "q": "Decision 2. Your context paragraph. Which sentence makes the background do argumentative work?",
-    "options": [
-      "Black Power grew out of conditions the Civil Rights Movement's victories never reached, so its militancy began as a response rather than a preference.",
-      "By 1965 about half of all African Americans were living in the northern cities, in ghettos with poor housing, weak schools and high unemployment.",
-      "The Civil Rights Act of 1964 ended discrimination in the United States, so the Black Power Movement no longer had any real grievance to raise."
-    ],
-    "correct": 0,
-    "explanation": "Background is where most essays go slack, because people narrate the situation and forget to claim anything about it. Option {opt0} makes the conditions into a cause. It lets you pre-empt the argument that the militancy was gratuitous. Option {opt1} is accurate and earns content credit, but it argues nothing. A paragraph of sentences like it is what the guidelines call regurgitation. Option {opt2} is factually wrong: the Act ended legal segregation, not discrimination, and the whole topic exists because of that difference."
-  },
-  {
-    "type": "question",
-    "stage": "Act",
-    "level": "Argue",
-    "build": true,
-    "part": "What the Black Power philosophy entailed has to be established before the militancy can be judged, because the philosophy is the thing the militancy served. When Stokely Carmichael raised the slogan at Greenwood, Mississippi in June 1966, after his twenty-seventh arrest, his demand was that African Americans take control of their own affairs. The philosophy that grew around the phrase promoted assertiveness, self-reliance and black pride, and control by African Americans of the politics of their own communities. It urged solidarity, emphasised the importance of black culture, traditions and history, and rejected the term 'Negro' in favour of 'black'. It promoted Afro hairstyles and African clothing and the slogan 'Black is beautiful'. It sought freedom from white authority rather than acceptance within it, and it insisted that African Americans should be able to protect themselves against police brutality. That last demand is where the philosophy and the militancy meet, and it is a demand for protection before it is a demand for confrontation.",
-    "q": "Decision 3. The philosophy. Which sentence positions it so that the rest of your essay can use it?",
-    "options": [
-      "Black Power was a philosophy of self-definition before it was a set of tactics, and militancy must be measured against it.",
-      "The Black Power philosophy promoted black pride, solidarity, African clothing and hairstyles, and the slogan that black is beautiful.",
-      "The Black Power philosophy was essentially a strategy of armed struggle against white authority in the United States during the 1960s."
-    ],
-    "correct": 0,
-    "explanation": "Option {opt0} sets up a measuring device the rest of the essay uses, which is what 'in the context of the Black Power philosophy' asks for. Option {opt1} is a good list and belongs in the paragraph, but a list is not a claim, and it leaves the marker to do your work. Option {opt2} quietly makes the tactics into the philosophy. Once you have written it, you have nothing left to weigh the militancy against, and the question becomes unanswerable."
-  },
-  {
-    "type": "question",
-    "stage": "Act",
-    "level": "Evidence",
-    "build": true,
-    "part": "Malcolm X gave the militant approach its clearest voice. He promoted armed self-defence against white oppression, argued that bloodshed would be necessary for revolution, and told African Americans to stand up against white authority in pursuit of freedom, justice and equality by whatever means possible. Speaking to Mississippi youth in 1964 he refused to accept non-violence unless it applied to both sides, saying that if the Ku Klux Klan were made non-violent he would be non-violent too. Yet the same speeches demanded self-respect and self-discipline of his own followers, promoted black pride, and urged African Americans to be proud of their African roots and to become self-reliant rather than seek integration. His militancy and his programme of self-empowerment were not two positions but one. After his suspension from the Nation of Islam in 1964 he formed the Organisation of Afro-American Unity, made a pilgrimage to Mecca, adopted a less extreme position and urged cooperation with sympathetic whites, before his assassination in February 1965.",
-    "q": "Decision 4. Malcolm X. Which sentence uses him as evidence rather than as a biography?",
-    "options": [
-      "Malcolm X made the militant case most sharply, and he made it as a demand for self-respect rather than a taste for violence.",
-      "Malcolm X rejected his surname, joined the Nation of Islam, and became a leading speaker among young African Americans in the northern cities.",
-      "Malcolm X proves that the movement was violent, since he rejected non-violence and told African Americans to seize freedom by any means possible."
-    ],
-    "correct": 0,
-    "explanation": "Option {opt0} makes a claim the paragraph then proves from his own words. It holds together the two things the marking guidelines list side by side. The guidelines tag his call to stand up by whatever means possible as militant and self-empowerment at once, so a marker rewards an answer that carries both. Option {opt1} is biography, and biography is the single most common way people fill a page on this topic without arguing. Option {opt2} overstates the evidence into 'violent'. You cannot sustain that against a source where his position is explicitly conditional."
-  },
-  {
-    "type": "question",
-    "stage": "Act",
-    "level": "Evidence",
-    "build": true,
-    "part": "Carmichael's break with non-violence was a judgement rather than a mood. He had spent years in the Student Non-violent Coordinating Committee and had been arrested repeatedly, and he concluded that the non-violent strategy had failed because violence against African Americans simply continued regardless of it. From that conclusion followed positions that were genuinely radical: he argued for the exclusion of white liberals from the movement, since a philosophy of self-reliance cannot be directed by the people it seeks independence from, and he promoted one plan to divide the United States into separate black and white countries. He also opposed American involvement in the Vietnam War, arguing that African Americans were being conscripted to fight for freedoms they did not hold at home. These positions show how far the movement had travelled from the Civil Rights Movement, and they show that the distance was measured in political direction rather than only in willingness to use force.",
-    "q": "Decision 5. Carmichael. Which sentence explains the break rather than reporting it?",
-    "options": [
-      "Carmichael's break with non-violence was a judgement about evidence, not temperament: the method had not stopped the attacks.",
-      "Stokely Carmichael first used the slogan at Greenwood in June 1966, after his twenty-seventh arrest during the March Against Fear.",
-      "Carmichael abandoned non-violence because he had grown impatient and wanted a more exciting form of protest than marching."
-    ],
-    "correct": 0,
-    "explanation": "Option {opt0} gives the break a reason grounded in evidence, which turns a change of tactics into an argument a marker can credit as interpretation. Option {opt1} is the fact and it belongs in the paragraph, but on its own it is narration. Option {opt2} sounds sympathetic and quietly destroys your case. It makes a reasoned political decision sound like restlessness. It hands the statement in the question everything it wants."
-  },
-  {
-    "type": "question",
-    "stage": "Act",
-    "level": "Argue",
-    "build": true,
-    "part": "The Black Panther Party is the strongest evidence for the statement and the paragraph should concede it plainly. Founded in Oakland in October 1966 by Bobby Seale and Huey Newton as the Black Panther Party for Self-Defence, it was created specifically to confront police brutality. Its members patrolled the streets to monitor police activity, wearing black leather jackets and berets and carrying guns, and it adopted Mao Zedong's slogan that power flows from the barrel of a gun, holding that African Americans should arm themselves to force white America to accept equality. Between 1967 and 1968 the Panthers were involved in violent clashes with police in which nine officers were killed, and they earned a reputation as dangerous revolutionaries. After 1968 the government used informers and agents against them and twenty-seven members were killed in shoot-outs with the police. No honest answer to this question can avoid any of that, and an answer that tries to avoid it will not be believed.",
-    "q": "Decision 6. The Panthers. Which sentence handles the evidence that supports the statement?",
-    "options": [
-      "The Panthers are the strongest evidence for the statement: they armed patrols against the police and fought clashes in which officers died.",
-      "The Black Panther Party was founded in Oakland in October 1966 by Huey Newton and Bobby Seale and had about five thousand members.",
-      "The Panthers were not really militant, since the guns were carried mainly for display and were rarely used against anybody at all."
-    ],
-    "correct": 0,
-    "explanation": "Conceding the strongest point against you is not a weakness in a critically discuss essay, it is the thing that makes your qualification credible in the next paragraph. Option {opt0} concedes and stays in control by naming the concession as evidence. Option {opt1} is a founding date with no claim on it. Option {opt2} is the trap that ruins otherwise strong answers: it denies evidence the marker knows exists, and after that sentence nothing else in your essay carries weight."
-  },
-  {
-    "type": "question",
-    "stage": "Act",
-    "level": "Weigh",
-    "build": true,
-    "part": "The label is nonetheless incomplete, because the same organisation and the same philosophy produced a programme of self-empowerment. The Panthers adopted a Ten Point Plan setting out their social, political and economic goals for the upliftment of African American communities, and they delivered it. They ran feeding schemes that eradicated hunger among children in their communities, literacy projects that attacked illiteracy directly, and childcare projects that took care of medical needs. They advised people on health, welfare and legal rights and provided meals for the poor, and they demanded that black history be taught in black schools. Some branches gained real respect in the ghettos because of these schemes rather than because of the patrols. Malcolm X's promotion of black pride, self-esteem and self-help belongs in the same column. The rifles and the breakfasts came from one demand, that African Americans should provide for and protect themselves, and separating them into a militant movement and a peaceful one misreads both.",
-    "q": "Decision 7. The counter-argument that 'critically discuss' requires. Which sentence qualifies without retracting?",
-    "options": [
-      "Militant is accurate but incomplete, because the same party ran the feeding schemes, the literacy classes and the childcare projects.",
-      "The Black Panther Party also ran feeding schemes, literacy projects and childcare, and demanded that black history be taught in black schools.",
-      "The self-empowerment programmes show the Black Panther Party was not a militant organisation, so the statement in the question is false."
-    ],
-    "correct": 0,
-    "explanation": "A counter-argument keeps what you have conceded and adds what the concession leaves out, which is what 'accurate but incomplete' does in three words. Option {opt1} contains the same evidence but presents it as an additional fact rather than as a qualification, so the marker sees content without argument. Option {opt2} throws away the concession you made in the previous paragraph, and an essay that contradicts itself between two paragraphs loses more than it gains."
-  },
-  {
-    "type": "question",
-    "stage": "Act",
-    "level": "Weigh",
-    "build": true,
-    "part": "The statement is therefore accurate about the movement's method and silent about its purpose. The Black Power Movement did adopt a militant approach: Malcolm X defended armed self-defence, Carmichael broke with non-violence and demanded the exclusion of white liberals, and the Black Panther Party armed itself against the police at a cost in lives on both sides. But that militancy was the method of a philosophy that had been asking for something else, namely that African Americans define themselves, control their own communities and provide for their own people, and the same movement pursued that end through feeding schemes, literacy classes, childcare, black studies and the insistence that black is beautiful. Judged in the context of the Black Power philosophy, as the question requires, the militant approach was one instrument of self-determination rather than the substance of it, and an account of the movement that stops at the word militant has described how it acted without explaining what it was for.",
-    "q": "Decision 8. Your conclusion. Which sentence decides the question the way the matrix rewards?",
-    "options": [
-      "The statement describes the method accurately and stops there: the militancy was real, and it expressed a philosophy of self-determination.",
-      "In conclusion the Black Power Movement used both militant methods and self-empowerment programmes throughout the course of the 1960s.",
-      "In conclusion the militant approach was a mistake that destroyed the movement and undid the gains of the Civil Rights Movement."
-    ],
-    "correct": 0,
-    "explanation": "A conclusion has to decide, and it has to decide the thing the introduction promised. Option {opt0} does both, and it draws the judgement from evidence rather than announcing it. Option {opt1} summarises without concluding, which is where many otherwise good essays lose the top band. Option {opt2} introduces a new and much larger claim in the last sentence, one you have produced no evidence for. A marker reads it as an argument that has lost its footing at the very end."
-  },
-  {
-    "type": "essay",
-    "stage": "Transfer"
-  },
-  {
-    "type": "narrative",
-    "stage": "Transfer",
-    "html": "\n<div class=\"stage-tag\">In the examination room</div>\n<h2>Getting that onto paper in forty minutes</h2>\n<div class=\"skill-callout\">\n<ul class=\"skill-list\">\n<li><strong>Plan for five minutes.</strong> Write your line of argument as one sentence at the top of the page, then four or five paragraph topics under it. If a topic does not serve the sentence, cross it out before you have written it.</li>\n<li><strong>Keep the PEEL shape.</strong> Point, explanation, example, link. The point sustains the argument from your introduction, the example is the specific historical evidence, and the link takes it back to the question.</li>\n<li><strong>Concede early and clearly.</strong> On a critically discuss question, the paragraph where you admit the other side is strong is the paragraph that earns you the top bands, not the one that risks them.</li>\n<li><strong>Watch the date range.</strong> The question says the 1960s. Angela Davis's trial and the Panthers' collapse belong to the 1970s and earn nothing.</li>\n<li><strong>About three pages.</strong> Roughly forty minutes if you are answering three questions in three hours. Leave yourself the last two minutes to read the conclusion back and check it answers the question you were actually asked.</li>\n</ul></div>\n<p>You are allowed to disagree with the essay you have just built. If your view is that the militancy defined the movement, argue that instead. The marking rewards an opinion supported by evidence, so a different line of argument, sustained and defended, scores just as well.</p>\n"
-  },
-  {
-    "type": "narrative",
-    "stage": "Transfer",
-    "html": "\n<div class=\"stage-tag\">Beyond the exam</div>\n<h2>Accurate but incomplete</h2>\n<p>The three words that built this essay were 'accurate but incomplete'. They are worth keeping long after the examination.</p>\n<p>Most of the descriptions you will meet of a person, a community, a party or a country are not lies. They are true things that leave out the rest. The militant Panthers are real. So is the breakfast programme. One of them made the photographs.</p>\n<p>Arguing well is not about proving the other side wrong. It is usually about accepting what they have got right, and then showing what the account leaves out. That is harder than disagreeing, and it is far more difficult to answer.</p>\n"
-  }
-];
 
 const DIFF = {
-  Argue:{ label:"Argue &middot; line of argument", cls:"chip-argue" },
+  Argue:{ label:"Argue &middot; take a line", cls:"chip-argue" },
   Evidence:{ label:"Evidence &middot; back it up", cls:"chip-evidence" },
-  Weigh:{ label:"Weigh &middot; critically discuss", cls:"chip-weigh" }
+  Weigh:{ label:"Weigh &middot; to what extent", cls:"chip-weigh" }
 };
 const KIND = {
   everyday:{ label:"Your instinct", cls:"chip-instinct" },
@@ -414,7 +411,7 @@ const KIND = {
 };
 const LEVELS = ["Argue","Evidence","Weigh"];
 
-const state = { idx:0, answers:{}, revealed:{}, order:{} };
+const state = { idx:0, answers:{}, revealed:{}, order:{}, picks:{}, placed:{}, added:{} };
 const questionIds = FLOW.map((f,i)=>f.type==="question"?i:null).filter(i=>i!==null);
 const assessedIds = FLOW.map((f,i)=>(f.type==="question"&&f.level)?i:null).filter(i=>i!==null);
 const buildIds = FLOW.map((f,i)=>f.build?i:null).filter(i=>i!==null);
@@ -428,63 +425,297 @@ const card=document.getElementById("flow-card");
 const backBtn=document.getElementById("back-btn");
 const nextBtn=document.getElementById("next-btn");
 
-document.getElementById("begin-btn").addEventListener("click",()=>{
+const SKIP_TO = 0;
+function beginAt(i){
+  state.idx = i;
   startScreen.classList.add("hidden"); flowScreen.classList.remove("hidden"); topBar.classList.remove("hidden"); render();
+}
+document.getElementById("begin-btn").addEventListener("click",()=>beginAt(0));
+if (SKIP_TO > 0 && SKIP_TO < FLOW.length) {
+  const sb=document.getElementById("skip-btn");
+  sb.classList.remove("hidden");
+  sb.addEventListener("click",()=>beginAt(SKIP_TO));
+}
+backBtn.addEventListener("click",()=>{
+  if(state.idx>0){ state.idx--; render(); }
+  else { flowScreen.classList.add("hidden"); topBar.classList.add("hidden"); startScreen.classList.remove("hidden"); window.scrollTo({top:0,behavior:"smooth"}); }
 });
-backBtn.addEventListener("click",()=>{ if(state.idx>0){state.idx--;render();} });
 nextBtn.addEventListener("click",()=>{ if(state.idx<FLOW.length-1){state.idx++;render();} else {showResults();} });
 document.getElementById("redo-btn").addEventListener("click",()=>location.reload());
+const addedModal=document.getElementById("added-modal");
+document.getElementById("added-close").addEventListener("click",()=>addedModal.classList.add("hidden"));
+addedModal.addEventListener("click",(e)=>{ if(e.target===addedModal) addedModal.classList.add("hidden"); });
 
 function render(){
   const item=FLOW[state.idx];
   document.getElementById("step-count").textContent=`Step ${state.idx+1} of ${FLOW.length}`;
   document.getElementById("fill").style.width=((state.idx+1)/FLOW.length*100)+"%";
-  backBtn.disabled=state.idx===0;
-  if(item.type==="question") renderQuestion(item);
+  backBtn.innerHTML = state.idx===0 ? "&larr; Back to the start" : "&larr; Back";
+  if(item.type==="story") renderStory(item);
+  else if(item.type==="summary") renderSummary(item);
+  else if(item.type==="question") renderQuestion(item);
   else if(item.type==="essay") renderEssay();
   else if(item.type==="source") renderSource(item);
   else renderStatic(item);
-  nextBtn.disabled = item.type==="question" ? !state.revealed[state.idx] : false;
+  if(item.type==="question") nextBtn.disabled=!state.revealed[state.idx];
+  else if(item.type!=="story") nextBtn.disabled=false;
   nextBtn.innerHTML = state.idx===FLOW.length-1 ? "See results &rarr;" : "Continue &rarr;";
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
-function essayParts(uptoIdx){
-  return buildIds.filter(i=>i<=uptoIdx && state.revealed[i]).map(i=>FLOW[i].part);
+function renderSummary(item){
+  const parts=buildIds.filter(i=>state.revealed[i]).map(i=>FLOW[i].part);
+  card.innerHTML='<div class="stage-tag">'+item.label+'</div><h2>'+item.heading+'</h2>'
+    +'<div class="essaypanel">'+parts.map(p=>'<p>'+p+'</p>').join("")+'</div>'
+    +(item.note?'<p style="margin-top:1.1rem;color:var(--ink-soft);">'+item.note+'</p>':'');
 }
 function renderEssay(){
   const parts=buildIds.map(i=>FLOW[i].part);
   card.innerHTML=`<div class="stage-tag">${ESSAY_SCREEN.label}</div><h2>${ESSAY_SCREEN.heading}</h2>
     <p>${ESSAY_SCREEN.intro}</p>
     <div class="finalessay"><div class="fq">${QUESTION}</div>${parts.map(p=>`<p>${p}</p>`).join("")}</div>
-    <p style="margin-top:1.1rem;color:var(--fade);">${ESSAY_SCREEN.outro}</p>`;
+    <p style="margin-top:1.1rem;color:var(--ink-soft);">${ESSAY_SCREEN.outro}</p>`;
 }
-function renderStatic(item){ card.innerHTML=item.html; bindToggles(); }
+function termsBlock(item){
+  if(!item.terms || !item.terms.length) return "";
+  const chips=item.terms.map((x,i)=>`<button class="term-btn" data-term="${i}">${x.t}<span class="plus">+</span></button>`).join("");
+  const defs=item.terms.map((x,i)=>`<div class="term-def" data-termdef="${i}"><strong>${x.t}</strong>${x.d}</div>`).join("");
+  return `<div class="terms"><div class="terms-label">Key terms &middot; tap to open</div><div class="term-row">${chips}</div>${defs}</div>`;
+}
+let lineTimers=[];
+function clearLines(){ lineTimers.forEach(clearTimeout); lineTimers=[]; }
+function renderStory(item){
+  clearLines();
+  let h='<div class="story"><div class="story-marker"><div class="story-num">'+item.marker+'</div>'
+      +'<div class="story-unit">'+item.markerLabel+'</div></div><div class="story-rule"></div>';
+  item.lines.forEach((l,i)=>{
+    const cls = i===item.lines.length-1 ? "story-line last" : "story-line";
+    h+='<div class="'+cls+'" id="sline_'+i+'">'+l+'</div>';
+  });
+  h+='</div>';
+  card.innerHTML=h;
+  nextBtn.disabled=true;
+  const step=650;
+  item.lines.forEach((_,i)=>{
+    lineTimers.push(setTimeout(()=>{
+      const el=document.getElementById("sline_"+i);
+      if(el) el.classList.add("vis");
+    }, 250+(i*step)));
+  });
+  lineTimers.push(setTimeout(()=>{ nextBtn.disabled=false; }, 250+(item.lines.length*step)));
+}
+
+// ---- carousel ----
+function bindCarousels(){
+  const boxes=card.querySelectorAll("[data-car]");
+  if(boxes.length){ nextBtn.disabled=true; }
+  const seen=[];
+  const checkAll=()=>{ if(seen.every(s=>s)) nextBtn.disabled=false; };
+  boxes.forEach((box,bi)=>{
+    const items=JSON.parse(box.getAttribute("data-car"));
+    if(!box.querySelector("[data-car-prompt]")){
+      box.insertAdjacentHTML("afterbegin",'<div class="car-prompt" data-car-prompt></div>');
+    }
+    const viewed=new Array(items.length).fill(false);
+    seen[bi]=false;
+    let i=0;
+    const frame=box.querySelector("[data-car-body]");
+    const count=box.querySelector("[data-car-count]");
+    const dots=box.querySelectorAll("[data-car-dot]");
+    const hint=box.querySelector("[data-car-hint]");
+    const prompt=box.querySelector("[data-car-prompt]");
+    const draw=()=>{
+      frame.innerHTML=items[i];
+      viewed[i]=true;
+      count.textContent=(i+1)+" of "+items.length;
+      dots.forEach((d,j)=>{ d.classList.toggle("on", j===i); d.classList.toggle("read", viewed[j]); });
+      if(viewed.every(v=>v)){ seen[bi]=true; checkAll(); }
+      const left=viewed.filter(v=>!v).length;
+      if(hint) hint.textContent = left ? left+" more to read" : "All read";
+      if(prompt){
+        prompt.innerHTML = left
+          ? '<span class="cp-mark">&rarr;</span><span>Tap through all '+items.length+' cards. Continue unlocks once you have read them.</span>'
+          : '<span class="cp-mark">&#10003;</span><span>All '+items.length+' read. Continue is unlocked.</span>';
+        prompt.classList.toggle("done", left===0);
+      }
+    };
+    box.querySelector("[data-car-prev]").addEventListener("click",()=>{ i=(i-1+items.length)%items.length; draw(); });
+    box.querySelector("[data-car-next]").addEventListener("click",()=>{ i=(i+1)%items.length; draw(); });
+    dots.forEach((d,j)=>d.addEventListener("click",()=>{ i=j; draw(); }));
+    let x0=null;
+    box.addEventListener("touchstart",e=>{ x0=e.touches[0].clientX; },{passive:true});
+    box.addEventListener("touchend",e=>{
+      if(x0===null) return;
+      const dx=e.changedTouches[0].clientX-x0;
+      if(Math.abs(dx)>40){ i=(i+(dx<0?1:items.length-1))%items.length; draw(); }
+      x0=null;
+    },{passive:true});
+    draw();
+  });
+}
+
+// ---- put in order ----
+function renderOrder(item, gi){
+  const revealed=state.revealed[gi];
+  const picked=state.picks[gi]||[];
+  if(!state.order[gi]){
+    const arr=item.items.map((_,i)=>i);
+    for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
+    state.order[gi]=arr;
+  }
+  const tag=DIFF[item.level];
+  let chosen="";
+  picked.forEach((orig,pos)=>{
+    let cls="ord-slot filled";
+    if(revealed) cls+= (orig===pos ? " right" : " wrong");
+    chosen+='<button class="'+cls+'" data-drop="'+pos+'" '+(revealed?"disabled":"")+'>'
+      +'<span class="ord-rank">'+(pos+1)+'</span><span class="ord-txt">'+item.items[orig]+'</span>'
+      +(revealed?"":'<span class="ord-x">&#10007;</span>')+'</button>';
+  });
+  let pool="";
+  state.order[gi].forEach(orig=>{
+    if(picked.indexOf(orig)!==-1) return;
+    pool+='<button class="ord-chip" data-pick="'+orig+'" '+(revealed?"disabled":"")+'>'+item.items[orig]+'</button>';
+  });
+  const all=picked.length===item.items.length;
+  card.innerHTML='<div class="stage-tag"><span class="chip '+tag.cls+'">'+tag.label+'</span></div>'
+    +'<div class="q-text">'+item.q+'</div>'
+    +'<div class="sort-prompt">Tap the events in order, earliest first. Tap one you have placed to take it back.</div>'
+    +(chosen?'<div class="ord-strip">'+chosen+'</div>':'')
+    +(pool?'<div class="ord-pool">'+pool+'</div>':'')
+    +'<div class="ord-actions"><button class="btn-small" id="ord-check" '+((!all||revealed)?"disabled":"")+'>Check my order</button></div>'
+    +(revealed?'<div class="explanation"><div class="expl-label">Why</div><div class="expl-text">'+item.explanation+'</div></div>':"");
+  if(!revealed){
+    card.querySelectorAll("[data-pick]").forEach(b=>b.addEventListener("click",()=>{
+      state.picks[gi]=(state.picks[gi]||[]).concat([parseInt(b.dataset.pick)]); render();
+    }));
+    card.querySelectorAll("[data-drop]").forEach(b=>b.addEventListener("click",()=>{
+      const pos=parseInt(b.dataset.drop);
+      const arr=(state.picks[gi]||[]).slice(); arr.splice(pos,1);
+      state.picks[gi]=arr; render();
+    }));
+    const ch=document.getElementById("ord-check");
+    if(ch) ch.addEventListener("click",()=>{
+      const pk=state.picks[gi]||[];
+      state.answers[gi]= pk.every((v,i)=>v===i) ? item.correct : -1;
+      state.revealed[gi]=true; render();
+    });
+  }
+}
+
+// ---- sort into two groups ----
+function renderSort(item, gi){
+  const revealed=state.revealed[gi];
+  const placed=state.placed[gi]||{};
+  const tag=DIFF[item.level];
+  const cols=item.groups.map((g,ci)=>{
+    let tags="";
+    item.items.forEach((it,ii)=>{
+      if(placed[ii]!==ci) return;
+      let cls="sort-tag";
+      if(revealed) cls+= (item.answers[ii]===ci ? " right" : " wrong");
+      tags+='<button class="'+cls+'" data-unplace="'+ii+'" '+(revealed?"disabled":"")+'>'+it+'</button>';
+    });
+    return '<div class="sort-col"><h4>'+g+'</h4>'+tags+'</div>';
+  }).join("");
+  let pool="";
+  item.items.forEach((it,ii)=>{
+    if(placed[ii]!==undefined) return;
+    pool+='<div class="ord-chip" style="cursor:default;">'+it
+      +'<div style="display:flex;gap:0.4rem;margin-top:0.5rem;">'
+      + item.groups.map((g,ci)=>'<button class="btn-small" data-place="'+ii+'-'+ci+'">'+g+'</button>').join("")
+      +'</div></div>';
+  });
+  const done=Object.keys(placed).length===item.items.length;
+  card.innerHTML='<div class="stage-tag"><span class="chip '+tag.cls+'">'+tag.label+'</span></div>'
+    +'<div class="q-text">'+item.q+'</div>'
+    +'<div class="sort-prompt">Under each card below, tap the column it belongs in. Tap a card you have already placed to take it back.</div>'
+    +'<div class="sort-cols">'+cols+'</div>'
+    +(pool?'<div class="ord-pool">'+pool+'</div>':"")
+    +'<div class="ord-actions"><button class="btn-small" id="sort-check" '+((!done||revealed)?"disabled":"")+'>Check</button></div>'
+    +(revealed?'<div class="explanation"><div class="expl-label">Why</div><div class="expl-text">'+item.explanation+'</div></div>':"");
+  if(!revealed){
+    card.querySelectorAll("[data-place]").forEach(b=>b.addEventListener("click",()=>{
+      const [ii,ci]=b.dataset.place.split("-").map(Number);
+      state.placed[gi]=Object.assign({},state.placed[gi]||{},{[ii]:ci}); render();
+    }));
+    card.querySelectorAll("[data-unplace]").forEach(b=>b.addEventListener("click",()=>{
+      const o=Object.assign({},state.placed[gi]||{}); delete o[parseInt(b.dataset.unplace)];
+      state.placed[gi]=o; render();
+    }));
+    const ch=document.getElementById("sort-check");
+    if(ch) ch.addEventListener("click",()=>{
+      const p=state.placed[gi]||{};
+      const right=item.items.every((_,ii)=>p[ii]===item.answers[ii]);
+      state.answers[gi]= right ? item.correct : -1;
+      state.revealed[gi]=true; render();
+    });
+  }
+}
+
+function showAdded(text){
+  const m=document.getElementById("added-modal");
+  document.getElementById("added-text").textContent=text;
+  m.classList.remove("hidden");
+}
+function bindMemory(){
+  card.querySelectorAll(".memory").forEach(box=>{
+    const label=box.querySelector(".memory-label");
+    if(!label || label.classList.contains("memory-toggle")) return;
+    const body=Array.prototype.slice.call(box.children).filter(el=>el!==label);
+    body.forEach(el=>{ el.style.display="none"; });
+    label.classList.add("memory-toggle");
+    label.insertAdjacentHTML("beforeend",'<span class="mplus">+</span>');
+    label.addEventListener("click",()=>{
+      const opening = body.length ? body[0].style.display==="none" : false;
+      body.forEach(el=>{ el.style.display = opening ? "" : "none"; });
+      box.classList.toggle("open", opening);
+      label.querySelector(".mplus").textContent = opening ? "\u2212" : "+";
+    });
+  });
+}
+function bindTerms(){
+  card.querySelectorAll("[data-term]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const i=btn.dataset.term;
+      const def=card.querySelector(`[data-termdef="${i}"]`);
+      const open=def.classList.toggle("open");
+      btn.classList.toggle("open",open);
+      btn.querySelector(".plus").textContent = open ? "\u2212" : "+";
+    });
+  });
+}
+function renderStatic(item){ card.innerHTML=item.html+termsBlock(item); bindToggles(); bindTerms(); bindMemory(); bindCarousels(); }
 function renderSource(item){
   let html=item.html;
   if(item.source){
     const s=item.source;
     const ev = s.evidence ? `<span class="evtag ${s.evidence.cls}">${s.evidence.label}</span>` : "";
-    html+=`<div class="source"><div class="source-strip"></div><div class="source-inner">
-      <div class="source-attr">${s.attr}</div>
+    const cl = s.clause ? `<span class="clause">${s.clause}</span>` : "";
+    html+=`<div class="source">${cl}<div class="source-attr">${s.attr}</div>
       <div class="source-body">${s.body}</div>${ev}
-      <div><button class="toggle-btn" data-toggle>What does this actually mean?</button></div>
-      <div class="toggle-body" data-toggle-body>${s.toggle}</div></div></div>`;
+      <div><button class="toggle-btn" data-toggle>What this actually means</button></div>
+      <div class="toggle-body" data-toggle-body>${s.toggle}</div></div>`;
   }
-  card.innerHTML=html;
+  card.innerHTML=html+termsBlock(item);
   bindToggles();
+  bindTerms();
+  bindMemory();
+  bindCarousels();
 }
 function bindToggles(){
   card.querySelectorAll("[data-toggle]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const body=btn.closest(".source").querySelector("[data-toggle-body]");
       body.classList.toggle("open");
-      btn.textContent=body.classList.contains("open")?"Hide":"What does this actually mean?";
+      btn.textContent=body.classList.contains("open")?"Hide":"What this actually means";
     });
   });
 }
 function renderQuestion(item){
   const gi=state.idx;
+  if(item.mode==="order"){ renderOrder(item, gi); return; }
+  if(item.mode==="sort"){ renderSort(item, gi); return; }
   if(!state.order[gi]){
     const arr=item.options.map((_,i)=>i);
     for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
@@ -494,6 +725,11 @@ function renderQuestion(item){
   const revealed=state.revealed[gi];
   const selected=state.answers[gi];
   const tag = item.level ? DIFF[item.level] : KIND[item.kind];
+  // {optN} resolves to the letter that option N carries on this learner's screen.
+  // Authors never hard-code a letter and never refer to an option by position.
+  const letterFor={};
+  order.forEach((orig,pos)=>{ letterFor[orig]=String.fromCharCode(65+pos); });
+  const resolve=(s)=>String(s).replace(/\{opt(\d+)\}/g,(m,n)=>letterFor[n]!==undefined?letterFor[n]:m);
   let optsHtml="";
   order.forEach((orig,pos)=>{
     let cls="option"; let mark="";
@@ -504,20 +740,17 @@ function renderQuestion(item){
     } else if(orig===selected) cls+=" selected";
     optsHtml+=`<button class="${cls}" data-opt="${orig}" ${revealed?"disabled":""}>
       <span class="opt-letter">${String.fromCharCode(65+pos)}</span>
-      <span class="opt-text">${item.options[orig]}</span>${mark}</button>`;
+      <span class="opt-text">${resolve(item.options[orig])}</span>${mark}</button>`;
   });
-  const letterFor={};
-  order.forEach((orig,pos)=>{ letterFor[orig]=String.fromCharCode(65+pos); });
-  const explResolved=(item.explanation||"").replace(/\{opt(\d)\}/g,(m,d)=>letterFor[+d]||m);
   const explLabel = item.level ? "Why" : "What that shows";
   let panel="";
-  if(revealed && item.build){
-    panel=`<div class="essaypanel"><div class="essaypanel-label"><span class="tick">&#10003;</span> Added to your essay</div>`
-      + essayParts(gi).map(p=>`<p>${p}</p>`).join("") + `</div>`;
+  if(revealed && item.build && !state.added[gi]){
+    state.added[gi]=true;
+    setTimeout(()=>showAdded(item.part), 350);
   }
   card.innerHTML=`<div class="stage-tag"><span class="chip ${tag.cls}">${tag.label}</span></div>
-    <div class="q-text">${item.q}</div><div class="options">${optsHtml}</div>
-    ${revealed?`<div class="explanation"><div class="expl-label">${explLabel}</div><div class="expl-text">${explResolved}</div></div>`:""}
+    <div class="q-text">${resolve(item.q)}</div><div class="options">${optsHtml}</div>
+    ${revealed?`<div class="explanation"><div class="expl-label">${explLabel}</div><div class="expl-text">${resolve(item.explanation)}</div></div>`:""}
     ${panel}`;
   if(!revealed){
     card.querySelectorAll("[data-opt]").forEach(b=>{
@@ -547,7 +780,12 @@ function showResults(){
       <div class="bd-score">${got}/${ids.length}</div></div>`;
   });
   window.scrollTo({top:0,behavior:"smooth"});
+  const dm=document.getElementById("done-modal");
+  document.getElementById("finish-btn").addEventListener("click",()=>dm.classList.remove("hidden"));
+  document.getElementById("done-close").addEventListener("click",()=>dm.classList.add("hidden"));
+  dm.addEventListener("click",(e)=>{ if(e.target===dm) dm.classList.add("hidden"); });
 }
+
 </script>
 </body>
 </html>
