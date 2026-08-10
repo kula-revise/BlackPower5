@@ -1,32 +1,11 @@
 <!DOCTYPE html>
-<!--
-  Kula Revise lesson engine, sunset clause skin.
-
-  Mechanics never change per series. Copy this file, repaint the variables in
-  :root and body.bright, and leave everything else alone.
-
-  Step types, all driven from the content JSON:
-    story      animated hook: marker, place, lines that fade up one at a time
-    narrative  a card of prose, which may carry a carousel, diagram, figure,
-               bullet list, stat strip, memory box or key terms
-    source     a card plus an explainer or document panel with an expander
-    question   multiple choice, or mode "order", or mode "sort"
-    summary    the running summary on a screen of its own
-    essay      the assembled skeleton, capstone only
-
-  Question text, options and explanations may use {opt0}, {opt1} and so on.
-  The renderer swaps each for the letter that option carries after the shuffle,
-  so nothing ever refers to an option by position.
-
-  Tokens replaced at build time: LESSON_TITLE, TOPIC, EYEBROW, SUBTITLE, INTRO,
-  START_FOOTER, RESULTS_EYEBROW, CLOSE_LABEL, CLOSE_BODY, RESULTS_FOOTER, SKIP_TO.
--->
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Build the Skeleton | The Black Power Movement | Kula Revise</title>
+<title>The Black Power Movement · Build the Skeleton</title>
 <style>
+
   /* ================= PALETTE AND TYPE ================= */
   :root {
       /* Black Power: Ink and Amber. Dark ground, two accents split by job. */
@@ -52,7 +31,7 @@
       --bad-bg: rgba(174,164,188,0.10); --bad-border: #8A7E98;
       --btn-hover: #8553C8;
       --start-hover: #2A2338;
-      --sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      --sans: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       --serif: Georgia, 'Times New Roman', serif;
     }
   /* Bright light inversion, kept but not exposed. Add class "bright" to body to switch. */
@@ -320,474 +299,245 @@
 
   .cover-line span{opacity:0;transition:opacity .5s ease}.cover-line span.vis{opacity:1}
 #kula-mode-toggle, .mode-toggle { min-height: 44px !important; padding-top: 0.6rem !important; padding-bottom: 0.6rem !important; box-sizing: border-box !important; }
-#next-btn, #begin-btn, #kdone-btn, #kretake-btn { min-height: 44px !important; }</style>
+#next-btn, #begin-btn, #kdone-btn, #kretake-btn { min-height: 44px !important; }
+.container{max-width:720px;margin:0 auto;padding:1.2rem 1.1rem 3rem;}
+.cap-intro{font-size:1.04rem;line-height:1.74;margin-bottom:1.1rem;}
+.yourpoint{background:var(--white);border:1px solid var(--hair);border-left:4px solid var(--flame);padding:0.8rem 0.95rem;margin-bottom:1.1rem;font-family:var(--serif);font-size:1rem;line-height:1.5;}
+.yourpoint b{display:block;font-family:var(--sans);font-size:0.62rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--flame);font-weight:700;margin-bottom:0.3rem;}
+.evlist{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.2rem;}
+.evrow{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1rem;background:var(--paper);border:1px solid var(--hair);}
+.evrow .evtext{flex:1;font-family:var(--serif);font-size:1rem;line-height:1.55;}
+.evrow .evtext .off{display:block;font-family:var(--sans);font-size:0.78rem;color:var(--ink-soft);margin-top:0.2rem;}
+.evtoggle{font-family:var(--sans);font-size:0.78rem;font-weight:700;border:1px solid var(--flame);color:var(--flame);background:transparent;padding:0.4rem 0.85rem;cursor:pointer;min-height:38px;white-space:nowrap;}
+.evrow.use{border-color:var(--flame);border-width:2px;background:var(--white);}
+.evrow.use .evtoggle{background:var(--flame);color:var(--on-flame);border-color:var(--flame);}
+.evrow.ok{border-color:var(--leaf);border-width:2px;background:var(--ev3-bg);}
+.evrow.miss{border-color:var(--leaf);border-style:dashed;border-width:2px;}
+.evrow.wrong{border-color:var(--bad-border);border-width:2px;background:var(--bad-bg);}
+.evtag{font-family:var(--sans);font-size:0.7rem;font-weight:700;letter-spacing:0.08em;}
+.evtag.y{color:var(--leaf);} .evtag.n{color:var(--ink-soft);}
+.frame{border:1px solid var(--hair);border-left:5px solid var(--flame);background:var(--white);padding:1.2rem 1.3rem;margin-bottom:1.2rem;}
+.frame .fp{padding:0.7rem 0 0.95rem;border-bottom:1px dashed var(--hair);}
+.frame .fp:last-child{border-bottom:none;padding-bottom:0;}
+.frame .frole{font-family:var(--sans);font-size:0.62rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--flame);font-weight:700;margin-bottom:0.3rem;}
+.frame .fts{font-family:var(--serif);font-weight:700;font-size:1.02rem;line-height:1.5;margin-bottom:0.5rem;}
+.frame .flabel{font-family:var(--sans);font-size:0.66rem;font-weight:700;color:var(--ink-soft);letter-spacing:0.04em;text-transform:uppercase;margin-bottom:0.2rem;}
+.frame ul{margin:0.1rem 0 0.6rem;padding-left:1.15rem;}
+.frame li{font-family:var(--serif);margin-bottom:0.25rem;line-height:1.5;}
+.frame .flink{font-family:var(--serif);font-style:italic;color:var(--ink-soft);}
+.writeup{font-family:var(--sans);background:var(--sheet);border:1px solid var(--tint-rule);border-left:5px solid var(--leaf);padding:1.1rem 1.2rem;}
+.writeup b{color:var(--leaf);font-size:1.05rem;}
+.writeup .wsub{font-size:0.92rem;line-height:1.6;color:var(--ink-soft);margin-top:0.4rem;}
+.cap-prog{font-family:var(--sans);font-size:0.66rem;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:700;margin-bottom:0.9rem;}
+.cap-actions{display:flex;justify-content:flex-end;}
+#kula-mode-toggle{position:fixed;top:0.7rem;right:0.7rem;z-index:60;font-family:var(--sans);font-size:0.7rem;font-weight:700;letter-spacing:0.06em;background:var(--sheet);color:var(--ink);border:1px solid var(--hair);border-radius:20px;padding:0.4rem 0.9rem;cursor:pointer;min-height:34px;}
+#kula-mode-toggle:hover{border-color:var(--flame);}
+</style>
 </head>
 <body>
-<style>#kula-mode-toggle{position:fixed;bottom:1.1rem;right:1.1rem;z-index:9999;display:inline-flex;align-items:center;gap:.45em;padding:.48rem .82rem;border-radius:999px;font-family:var(--sans);font-size:.7rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;cursor:pointer;-webkit-tap-highlight-color:transparent;line-height:1;background:#221C16;color:#C9BBA8;border:1px solid rgba(255,245,235,.18);box-shadow:0 2px 9px rgba(0,0,0,.32);transition:transform .15s ease,box-shadow .15s ease}#kula-mode-toggle:hover{transform:translateY(-1px)}#kula-mode-toggle svg{width:15px;height:15px;display:block;flex:0 0 auto}body.bright #kula-mode-toggle{background:#F4F6F8;color:#525C66;border-color:rgba(23,33,43,.15);box-shadow:0 2px 8px rgba(0,0,0,.10)}</style><button id="kula-mode-toggle" type="button" onclick="kulaToggle()" aria-label="Switch between light and dark mode"><span id="kmt-icon"></span><span id="kmt-label"></span></button><script>(function(){var MOON="<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z'/></svg>",SUN="<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='4.2'/><path d='M12 1.6v2M12 20.4v2M3.6 12h-2M22.4 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4'/></svg>",K="kula-theme";function paint(){var d=!document.body.classList.contains("bright");var ic=document.getElementById("kmt-icon"),la=document.getElementById("kmt-label");if(ic)ic.innerHTML=d?SUN:MOON;if(la)la.textContent=d?"Light mode":"Dark mode"}window.kulaToggle=function(){document.body.classList.toggle("bright");try{localStorage.setItem(K,document.body.classList.contains("bright")?"light":"dark")}catch(e){}paint()};try{if(localStorage.getItem(K)==="light")document.body.classList.add("bright")}catch(e){}paint();})();</script>
-<div class="container">
-
-  <div class="top-bar hidden" id="top-bar">
-    <div class="top-meta"><span id="stage-name">The Black Power Movement</span><span class="top-count" id="step-count">Step 1</span></div>
-    <div class="track"><div class="fill" id="fill"></div></div>
-  </div>
-
-  <div id="start-screen">
-    <div class="cover">
-      <div class="cover-eyebrow">Kula Revise · Grade 12 History · The Black Power Movement</div>
-      <h1 class="cover-title">Build the Skeleton</h1>
-      <svg class="flourish" viewBox="0 0 260 26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <line class="rule-ink" x1="0" y1="2" x2="130" y2="24" stroke-width="1.4"/>
-        <line class="rule-accent" x1="260" y1="2" x2="130" y2="24" stroke-width="1.4"/>
-        <circle class="dot" cx="130" cy="24" r="2.4"/>
-      </svg>
-      <div class="cover-line" id="cover-line"><span>One question at exam standard. </span><span>Eight decisions. </span><span>The line you carried through four lessons becomes the skeleton of the answer here.</span></div>
-      <div class="cover-actions">
-        <button class="btn-primary btn-begin" id="begin-btn">Begin &rarr;</button>
-        <button class="btn-skip hidden" id="skip-btn"><span class="sk-t">Skip the opening if you have done this lesson before</span><span class="sk-a">&rarr;</span></button>
-      </div>
-    </div>
-    <div class="footer">About 30 minutes. Lesson 5 of 5</div>
-  </div>
-
-  <div id="flow-screen" class="hidden">
-    <div class="card" id="flow-card"></div>
-    <div class="nav">
-      <button class="btn-secondary" id="back-btn">&larr; Back</button>
-      <button class="btn-primary" id="next-btn">Continue &rarr;</button>
-    </div>
-  </div>
-
-  <div class="modal-back hidden" id="added-modal">
-    <div class="modal">
-      <div class="modal-label">Added to your running summary</div>
-      <p id="added-text"></p>
-      <button class="btn-primary" id="added-close">Got it</button>
-    </div>
-  </div>
-
-  <div class="modal-back hidden" id="done-modal">
-    <div class="modal">
-      <div class="modal-label">Lesson 5 complete</div>
-      <h3>Build the Skeleton</h3>
-      <p>Tap Done to continue to the final knowledge check.</p>
-      <button class="btn-primary" id="done-close">Done</button>
-    </div>
-  </div>
-
-  <div id="results-screen" class="hidden">
-    <div class="header-block">
-      <div class="eyebrow">Lesson 5 complete</div>
-      <h1 class="masthead" style="font-size: clamp(1.7rem,4.8vw,2.5rem);">Where You Stand</h1>
-    </div>
-    <div class="score-row">
-      <div class="score-block"><div class="score-num"><span id="r-correct">0</span><span class="score-den">/<span id="r-total">0</span></span></div><div class="score-label">Argument moves</div></div>
-      <div class="score-block"><div class="score-num"><span id="r-pct">0</span><span class="score-den">%</span></div><div class="score-label">Accuracy</div></div>
-      <div class="score-block"><div class="score-num red" id="r-band">-</div><div class="score-label">Standard</div></div>
-    </div>
-    <div class="grade-desc" id="r-desc"></div>
-    <div class="breakdown"><div class="breakdown-label">By skill</div><div id="r-breakdown"></div></div>
-    <div class="card">
-      <div class="stage-tag">Beyond the exam</div>
-      You did not memorise an answer. You built one, decision by decision, from a stance to a verdict. That is how any argument worth making is put together, in an exam hall or long after it.
-    </div>
-    <div class="nav" style="justify-content: center; gap: 0.7rem;"><button class="btn-secondary" id="redo-btn">&#8635; Restart lesson</button><button class="btn-primary" id="finish-btn">Finish &rarr;</button></div>
-    <div class="footer">Tap Finish to go to the final knowledge check.</div>
-  </div>
-</div>
-
+<button id="kula-mode-toggle" type="button" onclick="kulaToggle()" aria-label="Switch light or dark mode"><span id="kmt">Light</span></button>
+<div class="container"><div id="stage"></div></div>
 <script>
+function kulaToggle(){var bright=document.body.classList.toggle("bright");document.getElementById("kmt").textContent=bright?"Dark":"Light";}
+var esc=function(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;};
+var frame={}, idx=0;
 
-const BANDS = [{"min": 84, "band": "Excellent", "desc": "You have the shape of the answer cold. Move on."}, {"min": 68, "band": "Strong", "desc": "A firm grip. Reread the one or two you missed."}, {"min": 50, "band": "Solid", "desc": "The shape is there. Go back over the cards you slipped on."}, {"min": 34, "band": "Patchy", "desc": "Some of it is landing, some slipping. Work the lesson through once more, slowly."}, {"min": 0, "band": "Start again", "desc": "A low score before you study a topic is a normal starting line, not a warning. Begin at the first card."}];
-const FLOW = [{"type": "narrative", "stage": "Recognise", "html": "<div class=\"stage-tag\">The exam question</div><h2>This Is Exam Standard</h2><p>This is a full essay question at the NSC standard, built against the way the real exam is marked. Not a watered down version dressed up to look hard.</p><div class=\"source\"><span class=\"clause\">Q6</span><div class=\"source-attr\">Grade 12 History, Paper 1 essay. 50 marks.</div><div class=\"source-body\"><p>Explain to what extent Black Power, as a philosophy, brought African Americans together to confront discrimination and segregation in the United States during the 1960s. Use relevant evidence to support your line of argument. [50]</p></div></div><p>Over this lesson you build the skeleton of that answer, one decision at a time. The line you carried through four lessons becomes its shape here.</p>"}, {"type": "narrative", "stage": "Destabilise", "html": "<div class=\"stage-tag\">Before you build</div><h2>How This Answer Is Judged</h2><p>This is not judged by ticking facts and adding them up. It is read as one thing: a clear line of argument, held from the first line to the last, backed by real evidence, ending in a weighed verdict.</p><p>What you know and how you argue are judged as one answer, not as two separate scores. A page full of true facts with no line still lands low.</p><p>So the command word decides everything. Get that right first, then let every paragraph serve it.</p>"}, {"type": "question", "stage": "Act", "level": "Argue", "q": "The command word is to what extent. Which opening answers it, rather than dodging it?", "options": ["It succeeded to a real but limited extent, and here is how far and why", "The Black Power philosophy was a very important part of American history in the 1960s", "Yes, the Black Power philosophy did succeed in organising African Americans in the 1960s", "The Black Power philosophy had many leaders, ideas and organisations across the whole decade"], "correct": 0, "explanation": "{opt0} answers how far, which is exactly what to what extent demands, and it promises reasons. {opt2} is a flat yes: it takes a side but skips the how far. That leaves the command word only half met."}, {"type": "question", "stage": "Act", "level": "Argue", "build": true, "part": "The Black Power philosophy succeeded to a real but limited extent. It organised African Americans around pride, self-reliance and self-defence, and won lasting gains, yet it never reached the poverty and policing that had produced it.", "q": "Decision 1. Your introduction has to take a stance. Which one does?", "options": ["The Black Power philosophy succeeded to a real but limited extent. It organised African Americans around pride, self-reliance and self-defence, and won lasting gains, yet it never reached the poverty and policing that had produced it.", "The Black Power philosophy grew in the United States during the 1960s. It involved leaders such as Stokely Carmichael and Malcolm X, and organisations such as the Black Panther Party, and it carried on well into the following decade.", "The Black Power philosophy failed completely. It achieved nothing at all for African Americans, changed no single life for the better, and left the United States exactly as segregated and unequal as it had been before that decade."], "correct": 0, "explanation": "{opt0} says how far and points at what the rest will prove, so it takes a stance. {opt1} is all true and picks no side, so an opening like it only gives background. Start there and there's no line to defend."}, {"type": "question", "stage": "Act", "level": "Evidence", "build": true, "part": "By the 1960s legal segregation was falling in the South, but in the northern ghettos poverty, poor housing and police brutality survived untouched. It was in that gap, where the Civil Rights laws never reached, that the movement took hold.", "q": "Decision 2. Your context paragraph, on the conditions. Which one sets up your line instead of just listing facts?", "options": ["By the 1960s legal segregation was falling in the South, but in the northern ghettos poverty, poor housing and police brutality survived untouched. It was in that gap, where the Civil Rights laws never reached, that the movement took hold.", "The Civil Rights Act was passed in 1964 and the Voting Rights Act in 1965. African Americans lived in ghettos in the northern cities, where there was much poverty and unemployment, and the police were often violent towards them.", "The Civil Rights laws of the 1960s had already solved the problems of the northern ghettos. Poverty, poor housing and police brutality were gone, so the movement grew up in a country that had no real grievances left to answer."], "correct": 0, "explanation": "{opt0} uses the conditions to explain why the movement arose, so the facts serve the line. {opt1} is all correct, but it only lists the facts and points nowhere, so it just sets the scene. Make the conditions do a job in the answer."}, {"type": "question", "stage": "Act", "level": "Evidence", "build": true, "part": "The philosophy organised people first by changing how they saw themselves. Carmichael's call for self-definition, pride and control of their own institutions, and the slogan Black is beautiful, gave people a reason to act together.", "q": "Decision 3. Your first body paragraph, on the philosophy. Which version argues its effect?", "options": ["The philosophy organised people first by changing how they saw themselves. Carmichael's call for self-definition, pride and control of their own institutions, and the slogan Black is beautiful, gave people a reason to act together.", "Stokely Carmichael made Black Power a public chant on a march in Mississippi in 1966. He believed in self-reliance and black pride, and the movement used the slogan Black is beautiful to promote African hairstyles and clothing.", "The philosophy told African Americans to give up on pride and identity and to wait quietly for white America to grant them their rights in its own good time, exactly as the older civil rights movement had always asked of them."], "correct": 0, "explanation": "{opt0} says what the philosophy did to people, so it drives the line. {opt1} is true but only narrates Carmichael and the slogan, so it stays background. Say what the idea achieved, not only that it existed."}, {"type": "question", "stage": "Act", "level": "Weigh", "build": true, "part": "Malcolm X's case for self-defence organised the angriest, who would never kneel for a beating, but it also frightened off allies and split the movement. It added force and lost breadth, so its organising was real yet double-edged.", "q": "Decision 4. Malcolm X and self-defence. Which version weighs how far this organised people?", "options": ["Malcolm X's case for self-defence organised the angriest, who would never kneel for a beating, but it also frightened off allies and split the movement. It added force and lost breadth, so its organising was real yet double-edged.", "Malcolm X rose through the Nation of Islam and argued for armed self-defence rather than non-violence. He broke with the Nation in 1964, made a pilgrimage to Mecca, and was assassinated in Harlem in early 1965 before Black Power.", "Malcolm X organised every single African American behind him and united the whole movement completely, so that after his speeches there was no disagreement left at all about how the long struggle for freedom should now be fought."], "correct": 0, "explanation": "{opt0} weighs it: force gained, breadth lost, organising real but mixed. {opt1} is a neat account of his life that never judges anything, so it stays narrative. A to what extent answer has to weigh and say how far."}, {"type": "question", "stage": "Act", "level": "Weigh", "build": true, "part": "The Panthers organised people most through the breakfasts and clinics, not the rifles. The guns drew the state's fire and broke the party, while the survival programmes built the loyalty. As organising, the programmes did more than the weapons.", "q": "Decision 5. The Black Panther Party. Which version weighs the guns against the programmes?", "options": ["The Panthers organised people most through the breakfasts and clinics, not the rifles. The guns drew the state's fire and broke the party, while the survival programmes built the loyalty. As organising, the programmes did more than the weapons.", "The Black Panther Party was founded in Oakland in 1966 by Huey Newton and Bobby Seale. It adopted a Ten Point Program, patrolled the police, and ran free breakfasts, clinics and literacy projects in Black communities across several cities.", "The Black Panther Party organised nobody at all. Its programmes reached no one, its patrols changed nothing, and it left the communities it worked in exactly as they had been, so the whole party can be set aside completely."], "correct": 0, "explanation": "{opt0} weighs the two halves and decides which organised more, which is the judgement the question wants. {opt1} is a correct list of what the party did, but it weighs nothing, so it stays background. Decide, and back the decision."}, {"type": "question", "stage": "Act", "level": "Evidence", "build": true, "part": "The gains are the firmest evidence of success: the most open forms of discrimination ended, more African Americans won public office, housing and facilities improved, and affirmative action opened jobs and college places once closed.", "q": "Decision 6. The gains, as evidence of success. Which version puts them to work?", "options": ["The gains are the firmest evidence of success: the most open forms of discrimination ended, more African Americans won public office, housing and facilities improved, and affirmative action opened jobs and college places once closed.", "After the movement, several things in the United States changed for African Americans. Discrimination was reduced, some people were elected to office, and there were new policies. Other developments also took place over the years that followed.", "The movement produced no gains that can be measured, so there is nothing to weigh on the side of success at all. Nothing improved for African Americans in office, in housing or in employment, and the record shows only failure."], "correct": 0, "explanation": "{opt0} names the gains and ties them to the success claim, so the evidence does a job. {opt1} gestures at change but names almost nothing, and vague evidence proves little. Be specific, and point each gain at the line."}, {"type": "question", "stage": "Act", "level": "Weigh", "build": true, "part": "Against all this, the deepest problems survived: poverty, unequal policing, and the party's own destruction by the state. Yet organising a people to act, and winning pride and office, is real success even where the economy stayed unchanged.", "q": "Decision 7. The case against your own line, and your reply. Which version does both?", "options": ["Against all this, the deepest problems survived: poverty, unequal policing, and the party's own destruction by the state. Yet organising a people to act, and winning pride and office, is real success even where the economy stayed unchanged.", "There are some arguments on the other side of this question too. Poverty carried on after the movement, and the Black Panther Party was broken by the FBI, and various other difficulties remained for African Americans in the years afterwards.", "There is no case against success worth making, because the movement solved every problem African Americans faced. Poverty ended, policing became fair, and nothing was left for any later movement to take up after the 1960s had closed."], "correct": 0, "explanation": "{opt0} states the strongest counter and then answers it, which is what to what extent needs before a verdict. {opt1} raises the counter but never answers it, so the objection still stands."}, {"type": "question", "stage": "Act", "level": "Argue", "build": true, "part": "So the Black Power philosophy succeeded to a real but limited extent. It organised African Americans around pride and self-defence and won lasting gains in identity and office, even as the poverty that bred it outlived the movement.", "q": "Decision 8. Your conclusion. Which one lands a verdict?", "options": ["So the Black Power philosophy succeeded to a real but limited extent. It organised African Americans around pride and self-defence and won lasting gains in identity and office, even as the poverty that bred it outlived the movement.", "In conclusion, the Black Power philosophy did a number of things during the 1960s and afterwards. It had several leaders and organisations, and it had both successes and some failures over the course of the years that it was active.", "In conclusion, the Black Power philosophy either succeeded completely or failed completely, and it is not really possible to say which of the two it was, so no clear verdict can be reached on this question in the end at all."], "correct": 0, "explanation": "{opt0} lands the verdict the whole answer has built, in the words of the command. {opt1} sums up without deciding, and a conclusion that picks no side undoes the case. End on the how far, not on a shrug."}, {"type": "essay", "stage": "Act"}, {"type": "narrative", "stage": "Transfer", "html": "<div class=\"stage-tag\">Before you go</div><h2>What You Are Holding Is a Skeleton</h2><p>It has the right shape: a stance, the conditions, the evidence in order, a counter-case and a weighed verdict.</p><p>It is about <span class=\"key\">299 words</span>. A strong answer to a fifty-mark question runs two to three times longer, in full sentences of your own.</p><p>Learn the shape, not these words. The shape is what the question rewards, and it fits any version of it.</p>"}, {"type": "narrative", "stage": "Transfer", "html": "<div class=\"stage-tag\">Before you go</div><h2>What It Leaves Out</h2><p>All of this sat in Lessons 1 to 4 and none of it reached the answer:</p><p>The Kerner Report of 1968. Malcolm X's break with the Nation and his pilgrimage to Mecca. The exact points of the Ten Point Program. COINTELPRO and the killing of Fred Hampton. Other figures such as Angela Davis. The student movements that carried the ideas on.</p><p>You cannot fit everything, and the question does not need everything. A real answer picks a few of these as its own knowledge and lets the rest go.</p>"}, {"type": "narrative", "stage": "Transfer", "html": "<div class=\"stage-tag\">Before you go</div><h2>Do Not Learn This Off by Heart</h2><p>This answer fits one question. The exam will ask this content another way. A memorised paragraph will not bend to fit.</p><p>Here is a second question that proves it. It is set the way Paper 1 sets it, and it draws on the same four lessons you just did:</p><div class=\"memory\"><div class=\"memory-label\">Try this one</div><p>Explain to what extent the Black Power Movement relied on violent, radical and militant methods in its effort to end discrimination in the USA.</p><div class=\"source-attr\">Grade 12 History, Paper 1 essay. 50 marks.</div></div><p>Start again from the command word. Decide how far violence and militancy really carried the movement. Then choose which of the same facts serve that new line. You have both the guns and the breakfast programmes to work with.</p>"}];
-
-
-const DIFF = {
-  Argue:{ label:"Argue &middot; take a line", cls:"chip-argue" },
-  Evidence:{ label:"Evidence &middot; back it up", cls:"chip-evidence" },
-  Weigh:{ label:"Weigh &middot; judge it", cls:"chip-weigh" }
+var COVER={
+  eyebrow:"Kula Revise \u00b7 Grade 12 History \u00b7 The Black Power Movement",
+  title:"Build the Skeleton",
+  lines:["Fifty marks. One hour. Three pages.","You will not write the essay here.","You build its skeleton: the line, the points, the evidence, the verdict.","Then you take the frame away and write it in your own words."]
 };
-const KIND = {
-  everyday:{ label:"Your instinct", cls:"chip-instinct" },
-  reveal:{ label:"Plot twist", cls:"chip-instinct" },
-  decision:{ label:"Your call", cls:"chip-instinct" }
-};
-const LEVELS = ["Argue","Evidence","Weigh"];
 
-const state = { idx:0, answers:{}, revealed:{}, order:{}, picks:{}, placed:{}, added:{} };
-const questionIds = FLOW.map((f,i)=>f.type==="question"?i:null).filter(i=>i!==null);
-const assessedIds = FLOW.map((f,i)=>(f.type==="question"&&f.level)?i:null).filter(i=>i!==null);
-const buildIds = FLOW.map((f,i)=>f.build?i:null).filter(i=>i!==null);
-const totalQ = assessedIds.length;
+var STEPS=[
+  {type:'cover'},
+  {type:'pick', tag:'Introduction \u00b7 your line of argument', prog:'Line of argument',
+    h2:'Choose your line of argument',
+    intro:'Every mark in this essay hangs off one sentence: the line you argue. The question asks to what extent Black Power brought African Americans together, so your line has to take a side on that. Pick the sentence that argues, not the one that only describes.',
+    correct:0,
+    opts:[
+      "Black Power brought African Americans together to a real but limited extent: it united them around pride and self-reliance and won lasting gains, but it never reached the poverty and policing that produced it.",
+      "Black Power was a philosophy of the 1960s and 1970s that involved many leaders, groups and ideas across the United States.",
+      "Black Power completely united African Americans and solved the poverty and policing that they faced."
+    ],
+    expl:"<b>The first sentence argues.</b> It takes a side (a real but limited extent) and says why, so the whole essay has a line to follow. The second only describes: a marker sees you telling the story, not making a case, and that caps you at middle marks. The third takes the wrong line, and the facts in this topic will go against it.",
+    save:function(s){frame.arg=s.opts[0];}},
 
-const startScreen=document.getElementById("start-screen");
-const flowScreen=document.getElementById("flow-screen");
-const resultsScreen=document.getElementById("results-screen");
-const topBar=document.getElementById("top-bar");
-const card=document.getElementById("flow-card");
-const backBtn=document.getElementById("back-btn");
-const nextBtn=document.getElementById("next-btn");
+  {type:'pick', tag:'Body 1 \u00b7 self-definition and pride', prog:'Body 1 of 3 \u00b7 claim',
+    h2:'Body paragraph 1: the topic sentence',
+    intro:'Your first body paragraph is about identity. Every paragraph opens with a claim that pushes your line forward. Pick the topic sentence that takes a clear position.',
+    correct:0,
+    opts:[
+      "It brought people together first by changing how they saw themselves.",
+      "Black Power involved a number of different leaders and ideas about identity.",
+      "Black Power told people to hide who they were and blend in quietly."
+    ],
+    expl:"<b>The first takes a side you can defend.</b> The second only describes that ideas existed. The third takes the wrong line: the movement told people to take pride in who they were, not to hide it, so you would be arguing against your own evidence.",
+    save:function(s){frame.b1ts=s.opts[0];}},
+  {type:'evidence', tag:'Body 1 \u00b7 self-definition and pride', prog:'Body 1 of 3 \u00b7 evidence',
+    h2:'Now choose the evidence',
+    ts:"It brought people together first by changing how they saw themselves.",
+    intro:'A claim is only worth the evidence under it. Tap Use it for the facts that back this exact point about identity. Leave out the real facts that belong to a different paragraph.',
+    items:[
+      {t:"Carmichael's call for self-definition and pride", use:true},
+      {t:"Control of their own institutions", use:true},
+      {t:"The slogan Black is beautiful", use:true},
+      {t:"A shared identity gave people a reason to act together", use:true},
+      {t:"The Panthers' free breakfast programme fed children", use:false, off:"that is the survival programmes, the next paragraph"},
+      {t:"Malcolm X's case for self-defence", use:false, off:"that splits the movement: the counter-argument"}
+    ],
+    expl:"<b>The four identity facts back this point.</b> The breakfast programme and self-defence are real and important, but each belongs in a different paragraph. Matching the fact to the exact point is the evidence skill.",
+    link:"A shared sense of who they were gave people a reason to act together.",
+    save:function(s){frame.b1ev=s.chosen; frame.b1link=s.link;}},
 
-const SKIP_TO = 0;
-function beginAt(i){
-  state.idx = i;
-  startScreen.classList.add("hidden"); flowScreen.classList.remove("hidden"); topBar.classList.remove("hidden"); render();
-}
-document.getElementById("begin-btn").addEventListener("click",()=>beginAt(0));
-if (SKIP_TO > 0 && SKIP_TO < FLOW.length) {
-  const sb=document.getElementById("skip-btn");
-  sb.classList.remove("hidden");
-  sb.addEventListener("click",()=>beginAt(SKIP_TO));
-}
-backBtn.addEventListener("click",()=>{
-  if(state.idx>0){ state.idx--; render(); }
-  else { flowScreen.classList.add("hidden"); topBar.classList.add("hidden"); startScreen.classList.remove("hidden"); if(window.staggerCover)window.staggerCover(); window.scrollTo({top:0,behavior:"smooth"}); }
-});
-nextBtn.addEventListener("click",()=>{ if(state.idx<FLOW.length-1){state.idx++;render();} else {showResults();} });
-document.getElementById("redo-btn").addEventListener("click",()=>location.reload());
-const addedModal=document.getElementById("added-modal");
-document.getElementById("added-close").addEventListener("click",()=>addedModal.classList.add("hidden"));
-addedModal.addEventListener("click",(e)=>{ if(e.target===addedModal) addedModal.classList.add("hidden"); });
+  {type:'pick', tag:'Body 2 \u00b7 the survival programmes', prog:'Body 2 of 3 \u00b7 claim',
+    h2:'Body paragraph 2: the topic sentence',
+    intro:'Your second body paragraph turns to the Black Panther Party. This is where you show how it organised communities day to day. Pick the topic sentence that takes a clear position.',
+    correct:0,
+    opts:[
+      "It brought communities together most through the survival programmes, not the guns.",
+      "The Black Panther Party did a number of different things in the 1960s.",
+      "The Panthers brought people together mainly through their armed patrols and rifles."
+    ],
+    expl:"<b>The first takes a side:</b> the programmes did the organising, not the weapons. The second only describes. The third takes the wrong line: the guns gave the state a reason to attack, and that broke the party, so the evidence does not support it.",
+    save:function(s){frame.b2ts=s.opts[0];}},
+  {type:'evidence', tag:'Body 2 \u00b7 the survival programmes', prog:'Body 2 of 3 \u00b7 evidence',
+    h2:'Now choose the evidence',
+    ts:"It brought communities together most through the survival programmes, not the guns.",
+    intro:'Same job again: tap Use it for the facts that prove this point about the programmes. Leave out the ones that belong to another paragraph.',
+    items:[
+      {t:"The free breakfast programme fed children before school", use:true},
+      {t:"Free health clinics in poor neighbourhoods", use:true},
+      {t:"The survival programmes built loyalty in the community", use:true},
+      {t:"The programmes organised people around daily needs", use:true},
+      {t:"The slogan Black is beautiful gave people pride", use:false, off:"that is identity, the first paragraph"},
+      {t:"Poverty and unequal policing survived untouched", use:false, off:"that is a limit: the counter-argument"}
+    ],
+    expl:"<b>The four programme facts build this point.</b> Black is beautiful is identity, and the surviving poverty is a limit you will raise against the counter-argument. Keep each fact in the paragraph it actually proves.",
+    link:"The programmes did more organising than the weapons ever did.",
+    save:function(s){frame.b2ev=s.chosen; frame.b2link=s.link;}},
 
+  {type:'pick', tag:'Body 3 \u00b7 counter-argument', prog:'Body 3 of 3 \u00b7 claim',
+    h2:'Body paragraph 3: the other side',
+    intro:'The command word is to what extent, so you have to weigh the other side before you decide. Pick the topic sentence that states the opposing case fairly.',
+    correct:0,
+    opts:[
+      "It can be argued that the movement drove people apart as much as it drew them together.",
+      "There were several problems and disagreements inside the movement.",
+      "The movement had no divisions and faced no problems at all."
+    ],
+    expl:"<b>The first states the other side fairly,</b> which is what the counter-argument step needs. The second only describes problems. The third refuses to admit the other side at all, so there is nothing to weigh against.",
+    save:function(s){frame.c1ts=s.opts[0];}},
+  {type:'evidence', tag:'Body 3 \u00b7 counter-argument', prog:'Body 3 of 3 \u00b7 evidence',
+    h2:'The evidence for the other side',
+    ts:"It can be argued that the movement drove people apart as much as it drew them together.",
+    intro:'Here you gather the strongest facts for the opposing case. Tap Use it for the ones that show division or failure. Leave out the successes: those cannot make the case against.',
+    items:[
+      {t:"Malcolm X's self-defence frightened off allies and split the movement", use:true},
+      {t:"The guns gave the state a reason to attack, and that broke the Panthers", use:true},
+      {t:"Poverty and unequal policing survived untouched", use:true},
+      {t:"The free breakfast programme fed children", use:false, off:"a success, not a case against"},
+      {t:"Black is beautiful gave people pride", use:false, off:"a success, not a case against"}
+    ],
+    expl:"<b>These three facts are the strongest case for the other side.</b> The breakfast programme and the pride are successes, so they cannot be the counter. Then you rebut: it still won lasting gains and a durable pride, so it brought people together to a real if limited extent.",
+    link:"Yet it still won lasting gains and a durable pride, so it brought people together to a real if limited extent.",
+    save:function(s){frame.c1ev=s.chosen; frame.c1link=s.link;}},
+
+  {type:'pick', tag:'Conclusion \u00b7 the verdict', prog:'Verdict',
+    h2:'Land your verdict',
+    intro:'A conclusion weighs both sides and still decides. Pick the verdict that does both. Avoid the absolute one and the one that sits on the fence.',
+    correct:0,
+    opts:[
+      "Black Power brought African Americans together to a real but limited extent: it united them around pride and self-reliance and won lasting gains in identity and office, even as the poverty that bred it outlived the movement.",
+      "Black Power completely united African Americans and fixed every problem they faced.",
+      "Black Power had some good sides and some bad sides, so it is hard to say whether it worked."
+    ],
+    expl:"<b>The first verdict weighs and still decides.</b> It admits what worked, names what did not, and lands on a judgement the essay has earned. The second is absolute; the third sits on the fence. Listing good and bad without deciding throws away your conclusion.",
+    save:function(s){frame.verdict=s.opts[0];}},
+
+  {type:'frame'}
+];
+
+var stage=document.getElementById('stage');
+function next(){ idx++; render(); window.scrollTo(0,0); }
 function render(){
-  const item=FLOW[state.idx];
-  document.getElementById("step-count").textContent=`Step ${state.idx+1} of ${FLOW.length}`;
-  document.getElementById("fill").style.width=((state.idx+1)/FLOW.length*100)+"%";
-  backBtn.innerHTML = state.idx===0 ? "&larr; Back to the start" : "&larr; Back";
-  if(item.type==="story") renderStory(item);
-  else if(item.type==="summary") renderSummary(item);
-  else if(item.type==="question") renderQuestion(item);
-  else if(item.type==="essay") renderEssay();
-  else if(item.type==="source") renderSource(item);
-  else renderStatic(item);
-  if(item.type==="question") nextBtn.disabled=!state.revealed[state.idx];
-  else if(item.type!=="story") nextBtn.disabled=false;
-  nextBtn.innerHTML = state.idx===FLOW.length-1 ? "See results &rarr;" : "Continue &rarr;";
-  window.scrollTo({top:0,behavior:"smooth"});
+  var s=STEPS[idx];
+  if(s.type==='cover') return renderCover();
+  if(s.type==='pick') return renderPick(s);
+  if(s.type==='evidence') return renderEvidence(s);
+  if(s.type==='frame') return renderFrame();
+}
+function prog(s){ return s.prog?('<div class="cap-prog">Step '+idx+' of '+(STEPS.length-2)+' \u00b7 '+s.prog+'</div>'):''; }
+
+function renderCover(){
+  var lines=COVER.lines.map(function(l){return '<span>'+esc(l)+'</span>';}).join('<br>');
+  stage.innerHTML='<div class="cover"><div class="cover-eyebrow">'+COVER.eyebrow+'</div>'+
+    '<h1 class="cover-title">'+esc(COVER.title)+'</h1><div class="flourish"></div>'+
+    '<div class="cover-line" id="cover-line">'+lines+'</div>'+
+    '<button class="btn-begin" id="begin-btn">Begin <span class="sa">&rarr;</span></button></div>';
+  var sp=[].slice.call(document.querySelectorAll('#cover-line span'));
+  sp.forEach(function(x,i){setTimeout(function(){x.classList.add('vis');}, 300+i*450);});
+  document.getElementById('begin-btn').onclick=next;
 }
 
-function renderSummary(item){
-  const parts=buildIds.filter(i=>state.revealed[i]).map(i=>FLOW[i].part);
-  card.innerHTML='<div class="stage-tag">'+item.label+'</div><h2>'+item.heading+'</h2>'
-    +'<div class="essaypanel">'+parts.map(p=>'<p>'+p+'</p>').join("")+'</div>'
-    +(item.note?'<p style="margin-top:1.1rem;color:var(--ink-soft);">'+item.note+'</p>':'');
-}
-function renderEssay(){
-  const parts=buildIds.map(i=>FLOW[i].part);
-  card.innerHTML=`<div class="stage-tag">${ESSAY_SCREEN.label}</div><h2>${ESSAY_SCREEN.heading}</h2>
-    <p>${ESSAY_SCREEN.intro}</p>
-    <div class="finalessay"><div class="fq">${QUESTION}</div>${parts.map(p=>`<p>${p}</p>`).join("")}</div>
-    <p style="margin-top:1.1rem;color:var(--ink-soft);">${ESSAY_SCREEN.outro}</p>`;
-}
-function termsBlock(item){
-  if(!item.terms || !item.terms.length) return "";
-  const chips=item.terms.map((x,i)=>`<button class="term-btn" data-term="${i}">${x.t}<span class="plus">+</span></button>`).join("");
-  const defs=item.terms.map((x,i)=>`<div class="term-def" data-termdef="${i}"><strong>${x.t}</strong>${x.d}</div>`).join("");
-  return `<div class="terms"><div class="terms-label">Key terms &middot; tap to open</div><div class="term-row">${chips}</div>${defs}</div>`;
-}
-let lineTimers=[];
-function clearLines(){ lineTimers.forEach(clearTimeout); lineTimers=[]; }
-function renderStory(item){
-  clearLines();
-  let h='<div class="story"><div class="story-marker"><div class="story-num">'+item.marker+'</div>'
-      +'<div class="story-unit">'+item.markerLabel+'</div></div><div class="story-rule"></div>';
-  item.lines.forEach((l,i)=>{
-    const cls = i===item.lines.length-1 ? "story-line last" : "story-line";
-    h+='<div class="'+cls+'" id="sline_'+i+'">'+l+'</div>';
-  });
-  h+='</div>';
-  card.innerHTML=h;
-  nextBtn.disabled=true;
-  const step=650;
-  item.lines.forEach((_,i)=>{
-    lineTimers.push(setTimeout(()=>{
-      const el=document.getElementById("sline_"+i);
-      if(el) el.classList.add("vis");
-    }, 250+(i*step)));
-  });
-  lineTimers.push(setTimeout(()=>{ nextBtn.disabled=false; }, 250+(item.lines.length*step)));
+function renderPick(s){
+  var chosen=null;
+  function draw(){
+    var opts=s.opts.map(function(o,i){
+      var cls='option', mark='';
+      if(chosen!==null){ cls+=' selected'; if(i===s.correct){cls+=' correct'; mark='<span class="opt-mark">&#10003;</span>';} else if(i===chosen){cls+=' wrong'; mark='<span class="opt-mark">&#10007;</span>';} else {cls+=' dimmed';} }
+      return '<button class="'+cls+'" data-i="'+i+'"'+(chosen!==null?' disabled':'')+'><span class="opt-letter">'+String.fromCharCode(65+i)+'</span><span class="opt-text">'+esc(o)+'</span>'+mark+'</button>';
+    }).join('');
+    var tail = chosen!==null ? '<div class="explanation"><div class="expl-label">Why</div><div class="expl-text">'+s.expl+'</div></div><div class="cap-actions" style="margin-top:1.2rem"><button class="btn-primary" id="cont">Continue</button></div>' : '';
+    stage.innerHTML=prog(s)+'<div class="card"><div class="stage-tag">'+s.tag+'</div><h2>'+esc(s.h2)+'</h2><p class="cap-intro">'+s.intro+'</p><div class="options">'+opts+'</div>'+tail+'</div>';
+    if(chosen===null){ [].forEach.call(document.querySelectorAll('.option'),function(b){ b.onclick=function(){ chosen=+b.getAttribute('data-i'); draw(); }; }); }
+    else { document.getElementById('cont').onclick=function(){ s.save(s); next(); }; }
+  }
+  draw();
 }
 
-// ---- carousel ----
-function bindCarousels(){
-  const boxes=card.querySelectorAll("[data-car]");
-  if(boxes.length){ nextBtn.disabled=true; }
-  const seen=[];
-  const checkAll=()=>{ if(seen.every(s=>s)) nextBtn.disabled=false; };
-  boxes.forEach((box,bi)=>{
-    const items=JSON.parse(box.getAttribute("data-car"));
-    if(!box.querySelector("[data-car-prompt]")){
-      box.insertAdjacentHTML("afterbegin",'<div class="car-prompt" data-car-prompt></div>');
+function renderEvidence(s){
+  var done=false, state={};
+  function draw(){
+    var rows=s.items.map(function(it,i){
+      var cls='evrow', right='';
+      if(state[i]&&!done) cls+=' use';
+      if(done){ var u=!!state[i]; if(it.use&&u){cls+=' ok';right='<span class="evtag y">USE</span>';} else if(it.use&&!u){cls+=' miss';right='<span class="evtag y">USE</span>';} else if(!it.use&&u){cls+=' wrong';right='<span class="evtag n">LEAVE OUT</span>';} else {right='<span class="evtag n">LEAVE OUT</span>';} }
+      var off = (done&&it.off)?'<span class="off">'+esc(it.off)+'</span>':'';
+      var ctrl = done ? right : '<button class="evtoggle" data-i="'+i+'">'+(state[i]?'Using \u2713':'Use it')+'</button>';
+      return '<div class="'+cls+'"><span class="evtext">'+esc(it.t)+off+'</span>'+ctrl+'</div>';
+    }).join('');
+    var foot;
+    if(!done) foot='<div class="cap-actions"><button class="btn-primary" id="chk" disabled>Check my selection</button></div>';
+    else foot='<div class="explanation"><div class="expl-label">Why</div><div class="expl-text">'+s.expl+'</div></div><div class="cap-actions" style="margin-top:1.2rem"><button class="btn-primary" id="cont">Continue</button></div>';
+    stage.innerHTML=prog(s)+'<div class="card"><div class="stage-tag">'+s.tag+'</div><h2>'+esc(s.h2)+'</h2>'+
+      '<div class="yourpoint"><b>Your point</b>'+esc(s.ts)+'</div><p class="cap-intro">'+s.intro+'</p><div class="evlist">'+rows+'</div>'+foot+'</div>';
+    if(!done){
+      [].forEach.call(document.querySelectorAll('.evtoggle'),function(b){ b.onclick=function(){ var i=+b.getAttribute('data-i'); state[i]=!state[i]; draw(); }; });
+      document.getElementById('chk').disabled=Object.keys(state).filter(function(k){return state[k];}).length===0;
+      document.getElementById('chk').onclick=function(){ done=true; draw(); };
+    } else {
+      s.chosen=s.items.filter(function(x,i){return state[i]&&x.use;}).map(function(x){return x.t;});
+      if(s.chosen.length===0) s.chosen=s.items.filter(function(x){return x.use;}).map(function(x){return x.t;});
+      document.getElementById('cont').onclick=function(){ s.save(s); next(); };
     }
-    const viewed=new Array(items.length).fill(false);
-    seen[bi]=false;
-    let i=0;
-    const frame=box.querySelector("[data-car-body]");
-    const count=box.querySelector("[data-car-count]");
-    const dots=box.querySelectorAll("[data-car-dot]");
-    const hint=box.querySelector("[data-car-hint]");
-    const prompt=box.querySelector("[data-car-prompt]");
-    const draw=()=>{
-      frame.innerHTML=items[i];
-      viewed[i]=true;
-      count.textContent=(i+1)+" of "+items.length;
-      dots.forEach((d,j)=>{ d.classList.toggle("on", j===i); d.classList.toggle("read", viewed[j]); });
-      if(viewed.every(v=>v)){ seen[bi]=true; checkAll(); }
-      const left=viewed.filter(v=>!v).length;
-      if(hint) hint.textContent = left ? left+" more to read" : "All read";
-      if(prompt){
-        prompt.innerHTML = left
-          ? '<span class="cp-mark">&rarr;</span><span>Tap through all '+items.length+' cards. Continue unlocks once you have read them.</span>'
-          : '<span class="cp-mark">&#10003;</span><span>All '+items.length+' read. Continue is unlocked.</span>';
-        prompt.classList.toggle("done", left===0);
-      }
-    };
-    box.querySelector("[data-car-prev]").addEventListener("click",()=>{ i=(i-1+items.length)%items.length; draw(); });
-    box.querySelector("[data-car-next]").addEventListener("click",()=>{ i=(i+1)%items.length; draw(); });
-    dots.forEach((d,j)=>d.addEventListener("click",()=>{ i=j; draw(); }));
-    let x0=null;
-    box.addEventListener("touchstart",e=>{ x0=e.touches[0].clientX; },{passive:true});
-    box.addEventListener("touchend",e=>{
-      if(x0===null) return;
-      const dx=e.changedTouches[0].clientX-x0;
-      if(Math.abs(dx)>40){ i=(i+(dx<0?1:items.length-1))%items.length; draw(); }
-      x0=null;
-    },{passive:true});
-    draw();
-  });
+  }
+  draw();
 }
 
-// ---- put in order ----
-function renderOrder(item, gi){
-  const revealed=state.revealed[gi];
-  const picked=state.picks[gi]||[];
-  if(!state.order[gi]){
-    const arr=item.items.map((_,i)=>i);
-    for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
-    state.order[gi]=arr;
-  }
-  const tag=DIFF[item.level];
-  let chosen="";
-  picked.forEach((orig,pos)=>{
-    let cls="ord-slot filled";
-    if(revealed) cls+= (orig===pos ? " right" : " wrong");
-    chosen+='<button class="'+cls+'" data-drop="'+pos+'" '+(revealed?"disabled":"")+'>'
-      +'<span class="ord-rank">'+(pos+1)+'</span><span class="ord-txt">'+item.items[orig]+'</span>'
-      +(revealed?"":'<span class="ord-x">&#10007;</span>')+'</button>';
-  });
-  let pool="";
-  state.order[gi].forEach(orig=>{
-    if(picked.indexOf(orig)!==-1) return;
-    pool+='<button class="ord-chip" data-pick="'+orig+'" '+(revealed?"disabled":"")+'>'+item.items[orig]+'</button>';
-  });
-  const all=picked.length===item.items.length;
-  card.innerHTML='<div class="stage-tag"><span class="chip '+tag.cls+'">'+tag.label+'</span></div>'
-    +'<div class="q-text">'+item.q+'</div>'
-    +'<div class="sort-prompt">Tap the events in order, earliest first. Tap one you have placed to take it back.</div>'
-    +(chosen?'<div class="ord-strip">'+chosen+'</div>':'')
-    +(pool?'<div class="ord-pool">'+pool+'</div>':'')
-    +'<div class="ord-actions"><button class="btn-small" id="ord-check" '+((!all||revealed)?"disabled":"")+'>Check my order</button></div>'
-    +(revealed?'<div class="explanation"><div class="expl-label">Why</div><div class="expl-text">'+item.explanation+'</div></div>':"");
-  if(!revealed){
-    card.querySelectorAll("[data-pick]").forEach(b=>b.addEventListener("click",()=>{
-      state.picks[gi]=(state.picks[gi]||[]).concat([parseInt(b.dataset.pick)]); render();
-    }));
-    card.querySelectorAll("[data-drop]").forEach(b=>b.addEventListener("click",()=>{
-      const pos=parseInt(b.dataset.drop);
-      const arr=(state.picks[gi]||[]).slice(); arr.splice(pos,1);
-      state.picks[gi]=arr; render();
-    }));
-    const ch=document.getElementById("ord-check");
-    if(ch) ch.addEventListener("click",()=>{
-      const pk=state.picks[gi]||[];
-      state.answers[gi]= pk.every((v,i)=>v===i) ? item.correct : -1;
-      state.revealed[gi]=true; render();
-    });
-  }
+function renderFrame(){
+  function ul(a){return '<ul>'+(a||[]).map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ul>';}
+  var f='<div class="fp"><div class="frole">Line of argument</div><div class="fts">'+esc(frame.arg)+'</div></div>'+
+    '<div class="fp"><div class="frole">Body 1 \u00b7 self-definition and pride</div><div class="fts">'+esc(frame.b1ts)+'</div><div class="flabel">Evidence</div>'+ul(frame.b1ev)+'<div class="flink">Link: '+esc(frame.b1link)+'</div></div>'+
+    '<div class="fp"><div class="frole">Body 2 \u00b7 the survival programmes</div><div class="fts">'+esc(frame.b2ts)+'</div><div class="flabel">Evidence</div>'+ul(frame.b2ev)+'<div class="flink">Link: '+esc(frame.b2link)+'</div></div>'+
+    '<div class="fp"><div class="frole">Body 3 \u00b7 counter-argument</div><div class="fts">'+esc(frame.c1ts)+'</div><div class="flabel">Evidence for the other side</div>'+ul(frame.c1ev)+'<div class="flink">Rebuttal: '+esc(frame.c1link)+'</div></div>'+
+    '<div class="fp"><div class="frole">Verdict</div><div class="fts">'+esc(frame.verdict)+'</div></div>';
+  stage.innerHTML='<div class="card"><div class="stage-tag">Your writing frame</div><h2>Take this away and write it up</h2>'+
+    '<p class="cap-intro">This is the shape of a top essay: a clear line, three paragraphs each with a claim and its evidence, and a verdict that decides. You built every choice in it.</p>'+
+    '<div class="frame">'+f+'</div>'+
+    '<div class="writeup"><b>Now write the essay in full, in your own words.</b><div class="wsub">The frame gives you the shape and the facts. Turning these notes into full sentences, in the exam, is the part only you can do.</div></div></div>';
 }
 
-// ---- sort into two groups ----
-function renderSort(item, gi){
-  const revealed=state.revealed[gi];
-  const placed=state.placed[gi]||{};
-  const tag=DIFF[item.level];
-  const cols=item.groups.map((g,ci)=>{
-    let tags="";
-    item.items.forEach((it,ii)=>{
-      if(placed[ii]!==ci) return;
-      let cls="sort-tag";
-      if(revealed) cls+= (item.answers[ii]===ci ? " right" : " wrong");
-      tags+='<button class="'+cls+'" data-unplace="'+ii+'" '+(revealed?"disabled":"")+'>'+it+'</button>';
-    });
-    return '<div class="sort-col"><h4>'+g+'</h4>'+tags+'</div>';
-  }).join("");
-  let pool="";
-  item.items.forEach((it,ii)=>{
-    if(placed[ii]!==undefined) return;
-    pool+='<div class="ord-chip" style="cursor:default;">'+it
-      +'<div style="display:flex;gap:0.4rem;margin-top:0.5rem;">'
-      + item.groups.map((g,ci)=>'<button class="btn-small" data-place="'+ii+'-'+ci+'">'+g+'</button>').join("")
-      +'</div></div>';
-  });
-  const done=Object.keys(placed).length===item.items.length;
-  card.innerHTML='<div class="stage-tag"><span class="chip '+tag.cls+'">'+tag.label+'</span></div>'
-    +'<div class="q-text">'+item.q+'</div>'
-    +'<div class="sort-prompt">Under each card below, tap the column it belongs in. Tap a card you have already placed to take it back.</div>'
-    +'<div class="sort-cols">'+cols+'</div>'
-    +(pool?'<div class="ord-pool">'+pool+'</div>':"")
-    +'<div class="ord-actions"><button class="btn-small" id="sort-check" '+((!done||revealed)?"disabled":"")+'>Check</button></div>'
-    +(revealed?'<div class="explanation"><div class="expl-label">Why</div><div class="expl-text">'+item.explanation+'</div></div>':"");
-  if(!revealed){
-    card.querySelectorAll("[data-place]").forEach(b=>b.addEventListener("click",()=>{
-      const [ii,ci]=b.dataset.place.split("-").map(Number);
-      state.placed[gi]=Object.assign({},state.placed[gi]||{},{[ii]:ci}); render();
-    }));
-    card.querySelectorAll("[data-unplace]").forEach(b=>b.addEventListener("click",()=>{
-      const o=Object.assign({},state.placed[gi]||{}); delete o[parseInt(b.dataset.unplace)];
-      state.placed[gi]=o; render();
-    }));
-    const ch=document.getElementById("sort-check");
-    if(ch) ch.addEventListener("click",()=>{
-      const p=state.placed[gi]||{};
-      const right=item.items.every((_,ii)=>p[ii]===item.answers[ii]);
-      state.answers[gi]= right ? item.correct : -1;
-      state.revealed[gi]=true; render();
-    });
-  }
-}
-
-function showAdded(text){
-  const m=document.getElementById("added-modal");
-  document.getElementById("added-text").textContent=text;
-  m.classList.remove("hidden");
-}
-function bindMemory(){
-  card.querySelectorAll(".memory").forEach(box=>{
-    const label=box.querySelector(".memory-label");
-    if(!label || label.classList.contains("memory-toggle")) return;
-    const body=Array.prototype.slice.call(box.children).filter(el=>el!==label);
-    body.forEach(el=>{ el.style.display="none"; });
-    label.classList.add("memory-toggle");
-    label.insertAdjacentHTML("beforeend",'<span class="mplus">+</span>');
-    label.addEventListener("click",()=>{
-      const opening = body.length ? body[0].style.display==="none" : false;
-      body.forEach(el=>{ el.style.display = opening ? "" : "none"; });
-      box.classList.toggle("open", opening);
-      label.querySelector(".mplus").textContent = opening ? "\u2212" : "+";
-    });
-  });
-}
-function bindTerms(){
-  card.querySelectorAll("[data-term]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const i=btn.dataset.term;
-      const def=card.querySelector(`[data-termdef="${i}"]`);
-      const open=def.classList.toggle("open");
-      btn.classList.toggle("open",open);
-      btn.querySelector(".plus").textContent = open ? "\u2212" : "+";
-    });
-  });
-}
-function renderStatic(item){ card.innerHTML=item.html+termsBlock(item); bindToggles(); bindTerms(); bindMemory(); bindCarousels(); }
-function renderSource(item){
-  let html=item.html;
-  if(item.source){
-    const s=item.source;
-    const ev = s.evidence ? `<span class="evtag ${s.evidence.cls}">${s.evidence.label}</span>` : "";
-    const cl = s.clause ? `<span class="clause">${s.clause}</span>` : "";
-    html+=`<div class="source">${cl}<div class="source-attr">${s.attr}</div>
-      <div class="source-body">${s.body}</div>${ev}
-      <div><button class="toggle-btn" data-toggle>What this actually means</button></div>
-      <div class="toggle-body" data-toggle-body>${s.toggle}</div></div>`;
-  }
-  card.innerHTML=html+termsBlock(item);
-  bindToggles();
-  bindTerms();
-  bindMemory();
-  bindCarousels();
-}
-function bindToggles(){
-  card.querySelectorAll("[data-toggle]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const body=btn.closest(".source").querySelector("[data-toggle-body]");
-      body.classList.toggle("open");
-      btn.textContent=body.classList.contains("open")?"Hide":"What this actually means";
-    });
-  });
-}
-function renderQuestion(item){
-  const gi=state.idx;
-  if(item.mode==="order"){ renderOrder(item, gi); return; }
-  if(item.mode==="sort"){ renderSort(item, gi); return; }
-  if(!state.order[gi]){
-    const arr=item.options.map((_,i)=>i);
-    for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
-    state.order[gi]=arr;
-  }
-  const order=state.order[gi];
-  const revealed=state.revealed[gi];
-  const selected=state.answers[gi];
-  const tag = item.level ? DIFF[item.level] : KIND[item.kind];
-  // {optN} resolves to the letter that option N carries on this learner's screen.
-  // Authors never hard-code a letter and never refer to an option by position.
-  const letterFor={};
-  order.forEach((orig,pos)=>{ letterFor[orig]=String.fromCharCode(65+pos); });
-  const resolve=(s)=>String(s).replace(/\{opt(\d+)\}/g,(m,n)=>letterFor[n]!==undefined?letterFor[n]:m);
-  let optsHtml="";
-  order.forEach((orig,pos)=>{
-    let cls="option"; let mark="";
-    if(revealed){
-      if(orig===item.correct){cls+=" correct"; mark='<span class="opt-mark">&#10003;</span>';}
-      else if(orig===selected){cls+=" wrong"; mark='<span class="opt-mark">&#10007;</span>';}
-      else cls+=" dimmed";
-    } else if(orig===selected) cls+=" selected";
-    optsHtml+=`<button class="${cls}" data-opt="${orig}" ${revealed?"disabled":""}>
-      <span class="opt-letter">${String.fromCharCode(65+pos)}</span>
-      <span class="opt-text">${resolve(item.options[orig])}</span>${mark}</button>`;
-  });
-  const explLabel = item.level ? "Why" : "What that shows";
-  let panel="";
-  if(revealed && item.build && !state.added[gi]){
-    state.added[gi]=true;
-    setTimeout(()=>showAdded(item.part), 350);
-  }
-  card.innerHTML=`<div class="stage-tag"><span class="chip ${tag.cls}">${tag.label}</span></div>
-    <div class="q-text">${resolve(item.q)}</div><div class="options">${optsHtml}</div>
-    ${revealed?`<div class="explanation"><div class="expl-label">${explLabel}</div><div class="expl-text">${resolve(item.explanation)}</div></div>`:""}
-    ${panel}`;
-  if(!revealed){
-    card.querySelectorAll("[data-opt]").forEach(b=>{
-      b.addEventListener("click",()=>{ state.answers[gi]=parseInt(b.dataset.opt); state.revealed[gi]=true; render(); });
-    });
-  }
-}
-function showResults(){
-  flowScreen.classList.add("hidden"); topBar.classList.add("hidden"); resultsScreen.classList.remove("hidden");
-  let correct=0;
-  assessedIds.forEach(i=>{ if(state.answers[i]===FLOW[i].correct) correct++; });
-  const pct=totalQ?Math.round((correct/totalQ)*100):0;
-  let band="-",desc="";
-  for(const b of BANDS){ if(pct>=b.min){ band=b.band; desc=b.desc; break; } }
-  document.getElementById("r-correct").textContent=correct;
-  document.getElementById("r-total").textContent=totalQ;
-  document.getElementById("r-pct").textContent=pct;
-  document.getElementById("r-band").textContent=band;
-  document.getElementById("r-desc").textContent=desc;
-  const bd=document.getElementById("r-breakdown"); bd.innerHTML="";
-  LEVELS.forEach(level=>{
-    const ids=assessedIds.filter(i=>FLOW[i].level===level);
-    const got=ids.filter(i=>state.answers[i]===FLOW[i].correct).length;
-    const p=ids.length?Math.round(got/ids.length*100):0;
-    bd.innerHTML+=`<div class="bd-row"><div class="bd-name">${level}</div>
-      <div class="bd-bar"><div class="bd-fill" style="width:${p}%"></div></div>
-      <div class="bd-score">${got}/${ids.length}</div></div>`;
-  });
-  window.scrollTo({top:0,behavior:"smooth"});
-  const dm=document.getElementById("done-modal");
-  document.getElementById("finish-btn").addEventListener("click",()=>dm.classList.remove("hidden"));
-  document.getElementById("done-close").addEventListener("click",()=>dm.classList.add("hidden"));
-  dm.addEventListener("click",(e)=>{ if(e.target===dm) dm.classList.add("hidden"); });
-}
-
+render();
 </script>
-<script>window.staggerCover=function(){var sp=[].slice.call(document.querySelectorAll("#cover-line span"));sp.forEach(function(s){s.classList.remove("vis")});sp.forEach(function(s,i){setTimeout(function(){s.classList.add("vis")},350*(i+1))})};window.staggerCover();</script></body>
+</body>
 </html>
