@@ -336,10 +336,12 @@
 </style>
 </head>
 <body>
+<script>/* kula: LMS embed events. "completed" fires once, when the learner reaches the closing screen. "advance" fires from the final button. */
+(function(){var sentCompleted=false;window.kulaEmbed=function(ev){if(ev==="completed"){if(sentCompleted)return;sentCompleted=true;}try{window.parent.postMessage({type:"lms-embed-event",version:"1.0",payload:{event:ev}},"*");}catch(e){}};})();</script>
 <button id="kula-mode-toggle" type="button" onclick="kulaToggle()" aria-label="Switch light or dark mode"><span id="kmt-icon"></span><span id="kmt-label"></span></button>
 <div class="container"><div id="stage"></div></div>
 <script>
-var K="kula-theme";var SUN="<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='4.2'/><path d='M12 1.6v2M12 20.4v2M3.6 12h-2M22.4 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4'/></svg>";var MOON="<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z'/></svg>";function paint(){var d=!document.body.classList.contains("bright");var ic=document.getElementById("kmt-icon"),la=document.getElementById("kmt-label");if(ic)ic.innerHTML=d?SUN:MOON;if(la)la.textContent=d?"Light mode":"Dark mode";}window.kulaToggle=function(){document.body.classList.toggle("bright");try{localStorage.setItem(K,document.body.classList.contains("bright")?"bright":"dark")}catch(e){}paint();};try{if(localStorage.getItem(K)==="bright")document.body.classList.add("bright")}catch(e){}paint();
+var K="kula-mode";var SUN="<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='4.2'/><path d='M12 1.6v2M12 20.4v2M3.6 12h-2M22.4 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M18.4 5.6l1.4-1.4M4.2 19.8l1.4-1.4'/></svg>";var MOON="<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z'/></svg>";function paint(){var d=!document.body.classList.contains("bright");var ic=document.getElementById("kmt-icon"),la=document.getElementById("kmt-label");if(ic)ic.innerHTML=d?SUN:MOON;if(la)la.textContent=d?"Light mode":"Dark mode";}window.kulaToggle=function(){document.body.classList.toggle("bright");try{localStorage.setItem(K,document.body.classList.contains("bright")?"light":"dark")}catch(e){}paint();};try{if(localStorage.getItem(K)==="light")document.body.classList.add("bright")}catch(e){}paint();
 var esc=function(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;};
 var frame={}, idx=0;
 
@@ -354,26 +356,28 @@ var STEPS=[
   {type:'pick', tag:'Introduction \u00b7 your line of argument', prog:'Line of argument',
     h2:'Choose your line of argument',
     intro:'Every mark in this essay hangs off one sentence: the line you argue. The question asks to what extent Black Power brought African Americans together, so your line has to take a side on that. Pick the sentence that argues, not the one that only describes.',
-    correct:0,
+    correct:1,
     opts:[
-      "Black Power brought African Americans together to a real but limited extent: it united them around pride and self-reliance and won lasting gains, but it never reached the poverty and policing that produced it.",
-      "Black Power was a philosophy of the 1960s and 1970s that involved many leaders, groups and ideas across the United States.",
-      "Black Power completely united African Americans and solved the poverty and policing that they faced."
+      "Black Power was a philosophy of the 1960s and 1970s involving many leaders, groups and different ideas.",
+      "Black Power united African Americans around pride and self-reliance, but never reached the poverty that produced it.",
+      "Black Power completely united African Americans and solved all of the poverty and policing they faced."
+    
     ],
-    expl:"<b>The first sentence argues.</b> It takes a side (a real but limited extent) and says why, so the whole essay has a line to follow. The second only describes: a marker sees you telling the story, not making a case, and that caps you at middle marks. The third takes the wrong line, and the facts in this topic will go against it.",
-    save:function(s){frame.arg=s.opts[0];}},
+    expl:"<b>The middle sentence argues.</b> It takes a side, real but limited, and says why. The whole essay then has a line to follow. The first only describes: a marker sees you telling the story rather than making a case, and that caps you at middle marks. The last takes the wrong line, and the facts in this topic go against it.",
+    save:function(s){frame.arg=s.opts[s.correct];}},
 
   {type:'pick', tag:'Body 1 \u00b7 self-definition and pride', prog:'Body 1 of 3 \u00b7 claim',
     h2:'Body paragraph 1: the topic sentence',
     intro:'Your first body paragraph is about identity. Every paragraph opens with a claim that pushes your line forward. Pick the topic sentence that takes a clear position.',
-    correct:0,
+    correct:2,
     opts:[
-      "It brought people together first by changing how they saw themselves.",
       "Black Power involved a number of different leaders and ideas about identity.",
-      "Black Power told people to hide who they were and blend in quietly."
+      "Black Power told people to hide who they were and blend in quietly.",
+      "It brought people together first by changing how they saw themselves."
+    
     ],
-    expl:"<b>The first takes a side you can defend.</b> The second only describes that ideas existed. The third takes the wrong line: the movement told people to take pride in who they were, not to hide it, so you would be arguing against your own evidence.",
-    save:function(s){frame.b1ts=s.opts[0];}},
+    expl:"<b>The last one takes a side you can defend.</b> The first only says ideas existed. The middle one takes the wrong line, because the movement told people to take pride in who they were rather than hide it. Argue that and you are fighting your own evidence.",
+    save:function(s){frame.b1ts=s.opts[s.correct];}},
   {type:'evidence', tag:'Body 1 \u00b7 self-definition and pride', prog:'Body 1 of 3 \u00b7 evidence',
     h2:'Now choose the evidence',
     ts:"It brought people together first by changing how they saw themselves.",
@@ -386,7 +390,7 @@ var STEPS=[
       {t:"The Panthers' free breakfast programme fed children", use:false, off:"that is the survival programmes, the next paragraph"},
       {t:"Malcolm X's case for self-defence", use:false, off:"that splits the movement: the counter-argument"}
     ],
-    expl:"<b>The four identity facts back this point.</b> The breakfast programme and self-defence are real and important, but each belongs in a different paragraph. Matching the fact to the exact point is the evidence skill.",
+    expl:"<b>The four identity facts back this point.</b> The breakfast programme and self-defence are real and important, but each belongs in a different paragraph. Match each fact to the exact point it proves. That is the evidence skill.",
     link:"A shared sense of who they were gave people a reason to act together.",
     save:function(s){frame.b1ev=s.chosen; frame.b1link=s.link;}},
 
@@ -398,9 +402,10 @@ var STEPS=[
       "It brought communities together most through the survival programmes, not the guns.",
       "The Black Panther Party did a number of different things in the 1960s.",
       "The Panthers brought people together mainly through their armed patrols and rifles."
+    
     ],
-    expl:"<b>The first takes a side:</b> the programmes did the organising, not the weapons. The second only describes. The third takes the wrong line: the guns gave the state a reason to attack, and that broke the party, so the evidence does not support it.",
-    save:function(s){frame.b2ts=s.opts[0];}},
+    expl:"<b>The first takes a side.</b> The programmes did the organising, not the weapons. The middle one only describes. The last takes the wrong line, because the guns gave the state a reason to attack, and that broke the party.",
+    save:function(s){frame.b2ts=s.opts[s.correct];}},
   {type:'evidence', tag:'Body 2 \u00b7 the survival programmes', prog:'Body 2 of 3 \u00b7 evidence',
     h2:'Now choose the evidence',
     ts:"It brought communities together most through the survival programmes, not the guns.",
@@ -413,21 +418,22 @@ var STEPS=[
       {t:"The slogan Black is beautiful gave people pride", use:false, off:"that is identity, the first paragraph"},
       {t:"Poverty and unequal policing survived untouched", use:false, off:"that is a limit: the counter-argument"}
     ],
-    expl:"<b>The four programme facts build this point.</b> Black is beautiful is identity, and the surviving poverty is a limit you will raise against the counter-argument. Keep each fact in the paragraph it actually proves.",
+    expl:"<b>The four programme facts build this point.</b> Black is beautiful is identity. The surviving poverty is a limit, and you will raise it against the counter-argument. Keep each fact in the paragraph it actually proves.",
     link:"The programmes did more organising than the weapons ever did.",
     save:function(s){frame.b2ev=s.chosen; frame.b2link=s.link;}},
 
   {type:'pick', tag:'Body 3 \u00b7 counter-argument', prog:'Body 3 of 3 \u00b7 claim',
     h2:'Body paragraph 3: the other side',
     intro:'The command word is to what extent, so you have to weigh the other side before you decide. Pick the topic sentence that states the opposing case fairly.',
-    correct:0,
+    correct:1,
     opts:[
-      "It can be argued that the movement drove people apart as much as it drew them together.",
-      "There were several problems and disagreements inside the movement.",
-      "The movement had no divisions and faced no problems at all."
+      "There were several problems and disagreements going on inside the movement at that time.",
+      "It can be argued the movement drove people apart as much as together.",
+      "The movement had no divisions at all and faced no problems whatsoever."
+    
     ],
-    expl:"<b>The first states the other side fairly,</b> which is what the counter-argument step needs. The second only describes problems. The third refuses to admit the other side at all, so there is nothing to weigh against.",
-    save:function(s){frame.c1ts=s.opts[0];}},
+    expl:"<b>The middle one states the other side fairly.</b> That is what the counter-argument step needs. The first only says problems existed. The last refuses to admit the other side at all, so there is nothing left to weigh against.",
+    save:function(s){frame.c1ts=s.opts[s.correct];}},
   {type:'evidence', tag:'Body 3 \u00b7 counter-argument', prog:'Body 3 of 3 \u00b7 evidence',
     h2:'The evidence for the other side',
     ts:"It can be argued that the movement drove people apart as much as it drew them together.",
@@ -439,7 +445,7 @@ var STEPS=[
       {t:"The free breakfast programme fed children", use:false, off:"a success, not a case against"},
       {t:"Black is beautiful gave people pride", use:false, off:"a success, not a case against"}
     ],
-    expl:"<b>These three facts are the strongest case for the other side.</b> The breakfast programme and the pride are successes, so they cannot be the counter. Then you rebut: it still won lasting gains and a durable pride, so it brought people together to a real if limited extent.",
+    expl:"<b>These three facts are the strongest case for the other side.</b> The breakfast programme and the pride are successes, so they cannot be the counter. Then you rebut. It still won lasting gains and a durable pride. It brought people together to a real if limited extent.",
     link:"Yet it still won lasting gains and a durable pride, so it brought people together to a real if limited extent.",
     save:function(s){frame.c1ev=s.chosen; frame.c1link=s.link;}},
 
@@ -448,12 +454,13 @@ var STEPS=[
     intro:'A conclusion weighs both sides and still decides. Pick the verdict that does both. Avoid the absolute one and the one that sits on the fence.',
     correct:0,
     opts:[
-      "Black Power brought African Americans together to a real but limited extent: it united them around pride and self-reliance and won lasting gains in identity and office, even as the poverty that bred it outlived the movement.",
-      "Black Power completely united African Americans and fixed every problem they faced.",
+      "Real but limited. It united people around pride and self-reliance and won gains, even as the poverty outlived it.",
+      "Black Power completely united African Americans and fixed every single problem that they had ever faced anywhere.",
       "Black Power had some good sides and some bad sides, so it is hard to say whether it worked."
+    
     ],
-    expl:"<b>The first verdict weighs and still decides.</b> It admits what worked, names what did not, and lands on a judgement the essay has earned. The second is absolute; the third sits on the fence. Listing good and bad without deciding throws away your conclusion.",
-    save:function(s){frame.verdict=s.opts[0];}},
+    expl:"<b>The first verdict weighs and still decides.</b> It admits what worked, names what did not, and lands on a judgement the essay has earned. The middle one is absolute. The last sits on the fence, and listing good and bad without deciding throws away your conclusion.",
+    save:function(s){frame.verdict=s.opts[s.correct];}},
 
   {type:'frame'}
 ];
@@ -535,7 +542,9 @@ function renderFrame(){
   stage.innerHTML='<div class="card"><div class="stage-tag">Your writing frame</div><h2>Take this away and write it up</h2>'+
     '<p class="cap-intro">This is the shape of a top essay: a clear line, three paragraphs each with a claim and its evidence, and a verdict that decides. You built every choice in it.</p>'+
     '<div class="frame">'+f+'</div>'+
-    '<div class="writeup"><b>Now write the essay in full, in your own words.</b><div class="wsub">The frame gives you the shape and the facts. Turning these notes into full sentences, in the exam, is the part only you can do.</div></div></div>';
+    '<div class="writeup"><b>Now write the essay in full, in your own words.</b><div class="wsub">The frame gives you the shape and the facts. Turning these notes into full sentences, in the exam, is the part only you can do.</div></div><div class="cap-actions" style="margin-top:1.4rem"><button class="btn-primary" id="cap-advance">Continue to What Stuck&nbsp;&rarr;</button></div></div>';
+  document.getElementById('cap-advance').onclick=function(){ kulaEmbed('advance'); };
+  kulaEmbed('completed');
 }
 
 render();
