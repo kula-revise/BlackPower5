@@ -9,55 +9,55 @@
   /* ================= PALETTE AND TYPE ================= */
   :root {
       /* Black Power: Ink and Amber. Dark ground, two accents split by job. */
-      --paper: #1B1720;     /* page ground */
-      --sheet: #241E2C;     /* card sheet */
-      --white: #2C2536;     /* inner panels, sources, explanations */
-      --ink: #F1ECF5;       /* text */
-      --ink-soft: #AEA4BC;
-      --flame: #9C6BE6;     /* accent one: navigation and emphasis (amethyst) */
-      --on-flame: #1B1720;  /* text on a solid accent-one block */
-      --leaf: #E2A63C;      /* accent two: anything the learner earned (amber) */
-      --on-leaf: #1B1720;   /* text on a solid accent-two block */
-      --hair: rgba(241,236,245,0.16);
-      --rail: rgba(241,236,245,0.12);
-      --tint: rgba(226,166,60,0.10);
-      --tint-rule: rgba(226,166,60,0.42);
-      --slot-bg: rgba(241,236,245,0.05);
-      --chipA-bg: rgba(156,107,230,0.20); --chipA-fg: #C3A2F0;
-      --chipB-bg: rgba(174,164,188,0.16); --chipB-fg: #C6BCD4;
-      --chipN-bg: rgba(241,236,245,0.07); --chipN-fg: #B4A9C2;
-      --ev3-bg: rgba(226,166,60,0.16); --ev3-fg: #E2A63C;
-      --ok-bg: rgba(226,166,60,0.16);
-      --bad-bg: rgba(174,164,188,0.10); --bad-border: #8A7E98;
-      --btn-hover: #8553C8;
-      --start-hover: #2A2338;
+      --paper: #080C16;     /* page ground */
+      --sheet: #121926;     /* card sheet */
+      --white: #1B2433;     /* inner panels, sources, explanations */
+      --ink: #EAF0F9;       /* text */
+      --ink-soft: #8A97A8;
+      --flame: #FF4D6D;     /* accent one: navigation and emphasis (amethyst) */
+      --on-flame: #080C16;  /* text on a solid accent-one block */
+      --leaf: #58B6FF;      /* accent two: anything the learner earned (amber) */
+      --on-leaf: #080C16;   /* text on a solid accent-two block */
+      --hair: rgba(234,240,249,0.16);
+      --rail: rgba(234,240,249,0.12);
+      --tint: rgba(88,182,255,0.10);
+      --tint-rule: rgba(88,182,255,0.42);
+      --slot-bg: rgba(234,240,249,0.05);
+      --chipA-bg: rgba(255,77,109,0.20); --chipA-fg: #FFA3B4;
+      --chipB-bg: rgba(151,163,180,0.16); --chipB-fg: #BCC6D4;
+      --chipN-bg: rgba(234,240,249,0.07); --chipN-fg: #A9B4C2;
+      --ev3-bg: rgba(88,182,255,0.16); --ev3-fg: #58B6FF;
+      --ok-bg: rgba(88,182,255,0.16);
+      --bad-bg: rgba(151,163,180,0.10); --bad-border: #7E8898;
+      --btn-hover: #E03354;
+      --start-hover: #1A2436;
       --sans: 'Segoe UI', 'Helvetica Neue', Helvetica, Arial, sans-serif;
       --serif: Georgia, 'Times New Roman', serif;
     }
   /* Bright light inversion, kept but not exposed. Add class "bright" to body to switch. */
     body.bright {
-      --paper: #F1ECE2;
-      --sheet: #FAF6EE;
-      --white: #FFFDF7;
-      --ink: #241C2E;
-      --ink-soft: #5E5568;
-      --flame: #6A3FB0;
-      --on-flame: #FFFDF7;
-      --leaf: #9A6B12;
-      --on-leaf: #FFFDF7;
-      --hair: rgba(36,28,46,0.18);
-      --rail: rgba(36,28,46,0.12);
-      --tint: rgba(154,107,18,0.08);
-      --tint-rule: rgba(154,107,18,0.35);
+      --paper: #E7ECF3;
+      --sheet: #FFFFFF;
+      --white: #DBE2EC;
+      --ink: #101620;
+      --ink-soft: #57616E;
+      --flame: #B8002E;
+      --on-flame: #FFFFFF;
+      --leaf: #0854B4;
+      --on-leaf: #FFFFFF;
+      --hair: rgba(16,22,32,0.18);
+      --rail: rgba(16,22,32,0.12);
+      --tint: rgba(8,84,180,0.08);
+      --tint-rule: rgba(8,84,180,0.35);
       --slot-bg: rgba(255,255,255,0.5);
-      --chipA-bg: #E9DEF7; --chipA-fg: #5A2E9A;
-      --chipB-bg: #E6E2EC; --chipB-fg: #4A4358;
-      --chipN-bg: #E7E2DA; --chipN-fg: #4E4658;
-      --ev3-bg: #F3E7CC; --ev3-fg: #7A5410;
-      --ok-bg: rgba(154,107,18,0.12);
-      --bad-bg: rgba(36,28,46,0.06); --bad-border: #9A8FA6;
-      --btn-hover: #57329A;
-      --start-hover: #0E0A16;
+      --chipA-bg: #FBE0E6; --chipA-fg: #96001F;
+      --chipB-bg: #E3E8F0; --chipB-fg: #414B58;
+      --chipN-bg: #E8ECF2; --chipN-fg: #46505E;
+      --ev3-bg: #DCE8F8; --ev3-fg: #06459A;
+      --ok-bg: rgba(8,84,180,0.12);
+      --bad-bg: rgba(16,22,32,0.06); --bad-border: #8F97A6;
+      --btn-hover: #96001F;
+      --start-hover: #0A0E15;
     }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   .container { max-width: 720px; margin: 0 auto; }
@@ -291,7 +291,7 @@
   .btn-small:disabled { opacity: 0.35; cursor: not-allowed; }
 
   /* ================= POP UPS ================= */
-  .modal-back { position: fixed; inset: 0; background: rgba(8,16,28,0.72); display: flex; align-items: center; justify-content: center; padding: 1.2rem; z-index: 50; }
+  .modal-back { position: fixed; inset: 0; background: rgba(8,12,22,0.72); display: flex; align-items: center; justify-content: center; padding: 1.2rem; z-index: 50; }
   .modal { background: var(--sheet); border-top: 3px solid var(--flame); max-width: 24rem; width: 100%; padding: 1.6rem 1.5rem 1.5rem; text-align: center; }
   .modal-label { font-family: var(--sans); font-size: 0.64rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--leaf); font-weight: 600; margin-bottom: 0.7rem; }
   .modal h3 { font-family: var(--sans); font-size: 1.2rem; font-weight: 600; margin-bottom: 0.7rem; }
